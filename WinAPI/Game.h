@@ -26,6 +26,11 @@ public:
 
 	const int GetWD_STYLE(){ return this->WD_STYLE; }
 	bool SetWD_STYLE(const int style){ this->WD_STYLE = style; }
+
+	
+	const Map& GetMap() const { return *map_list[currentScene]; }// 맵 반환
+
+	void CreateBullet(LPARAM lParam);
 private:
 	// 윈도우 스타일
 	int WD_STYLE = (WS_CAPTION |

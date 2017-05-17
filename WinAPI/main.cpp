@@ -66,6 +66,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		Game::GetInstance()->InputHandle(wParam);
 		return 0;
+	case WM_LBUTTONDOWN:
+		Game::GetInstance()->CreateBullet(lParam);
+		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		GetClientRect(hWnd, &crt);

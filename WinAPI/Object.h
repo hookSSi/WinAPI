@@ -10,7 +10,7 @@ public:
 	Vector2D scale; // 크기
 	bool isPhysics; // 물리 영향 받는 지 여부
 
-	Object():isPhysics(true){};
+	Object():isPhysics(false){};
 	virtual ~Object(){};
 
 	Object(Object &other);
@@ -22,7 +22,8 @@ public:
 	bool SetPivot(Vector2D& pivot);
 
 	virtual void Draw(HWND hWnd, HDC hdc){};
-	virtual bool Update(){ return true; }; // 게임 오브젝트 업데이트
+	virtual bool Update(){ return true; } // 게임 오브젝트 업데이트
+	virtual bool FixedUpdate(float time){ return true; }
 private:
 	Vector2D size;
 	Vector2D pivot;

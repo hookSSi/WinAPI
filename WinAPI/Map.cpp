@@ -3,6 +3,8 @@
 
 Map::Map()
 {
+	maxY_list.reserve(WIDTH);
+
 	for (int x = 0; x < WIDTH; x++)
 	{
 		vector<Pixel> column;
@@ -10,10 +12,10 @@ Map::Map()
 		{
 			Pixel pixel;
 			pixel.position = Vector2D(0,0);
-			pixel.SetSolid(false);
 			column.push_back(pixel);
 		}
 		_terrain.push_back(column);
+		maxY_list.push_back(0);
 	}
 }
 
@@ -31,9 +33,10 @@ bool Map::Initialize()
 	for (int x = 0; x < WIDTH; x++)
 	{
 		maxY = PerlinNoise::PerlinNoise_1D(x / WIDTH, this->_persistance, this->_octave);
-		for (int y1 = 0, y2 = 0; (350 - maxY) - y2 > 0; y1++, y2++)
+		maxY_list[x] = (int)(350 - maxY);
+		for (int y1 = (int)(350 - maxY), y2 = 0; (350 - maxY) + y2 <= HEIGHT; y1++, y2++)
 		{
-			_terrain[x][y1].position = Vector2D((float)x, (350-maxY) - y2);
+			_terrain[x][y1].position = Vector2D((float)x, (350-maxY) + y2);
 			_terrain[x][y1].SetSolid(true);
 		}
 	}
@@ -54,7 +57,31 @@ bool Map::Draw(HWND hWnd, HDC hdc)
 
 	for (int x = 0; x < WIDTH; x++)
 	{
-		Rectangle(hdc, x, _terrain[x][0].position.y, x + 1, HEIGHT);
+		bool mode = true;
+
+		for (int y = maxY_list[x]; y < HEIGHT; y++)
+		{
+			if (!_terrain[x][y].IsSolid())
+			{
+				mode = false;
+				break;
+			}
+		}
+
+		if (mode) // 중간에 픽셀이 비지 않으면 선으로 처리
+		{
+			Rectangle(hdc, x, _terrain[x][maxY_list[x]].position.y, x + 1, HEIGHT);
+		}	
+		else // 중간에 픽셀이 비면 일일히 처리
+		{
+			for (int y = maxY_list[x]; y < HEIGHT; y++)
+			{
+				if (_terrain[x][y].IsSolid())
+				{
+					SetPixel(hdc, x, _terrain[x][y].position.y, WHITE_COLOR);
+				}
+			}
+		}
 	}
 
 	SelectObject(hdc, OldPen);
@@ -86,9 +113,16 @@ bool Map::Draw_norm(HWND hWnd, HDC hdc, bool toggle)
 
 		for (int x = 0; x < WIDTH; x += boxSize)
 		{
-			Vector2D norm = GetNormal(x, _terrain[x][0].position.y, boxSize) * scale;
-			MoveToEx(hdc, x, _terrain[x][0].position.y, NULL);
-			LineTo(hdc, x - norm.x, _terrain[x][0].position.y - norm.y);
+			for (int y = maxY_list[x]; y < HEIGHT; y++)
+			{
+				if (_terrain[x][y].IsSolid())
+				{
+					Vector2D norm = GetNormal(x, _terrain[x][y].position.y, boxSize) * scale;
+					MoveToEx(hdc, x, _terrain[x][y].position.y, NULL);
+					LineTo(hdc, x + norm.x, _terrain[x][y].position.y + norm.y);
+					break;
+				}
+			}
 		}
 
 		SelectObject(hdc, OldPen);

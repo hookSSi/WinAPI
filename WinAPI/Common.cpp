@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Tank.h"
 #include "TextUI.h"
+#include "Map.h"
 
 void FillSurface(HWND hWnd, HDC hdc, BOOL mode)
 {
@@ -130,4 +131,98 @@ float PerlinNoise::PerlinNoise_1D(float x, float persistance, int octave)
 	}
 
 	return total;
+}
+
+tuple<Vector2D,Vector2D> Raycast(Map terrain, int startX, int startY, int lastX, int lastY)
+{
+	int delta_x = abs(lastX - startX);
+	int delta_y = abs(lastY - startY);
+
+	int x = startX;
+	int y = startY;
+
+	int xinc1, xinc2, yinc1, yinc2;
+
+	if (lastX >= startX)
+	{
+		xinc1 = 1;
+		xinc2 = 1;
+	}
+	else
+	{
+		xinc1 = -1;
+		xinc2 = -1;
+	}
+	if (lastY >= startY)
+	{
+		yinc1 = 1;
+		yinc2 = 1;
+	}
+	else
+	{
+		yinc1 = -1;
+		yinc2 = -1;
+	}
+
+	int den, num, numadd, numpixels;
+	if (delta_x >= delta_y)
+	{
+		xinc1 = 0;
+		yinc2 = 0;
+		den = delta_x;
+		num = delta_x / 2;
+		numadd = delta_y;
+		numpixels = delta_x;
+	}
+	else
+	{
+		xinc2 = 0;
+		yinc2 = 0;
+		den = delta_y;
+		num = delta_y / 2;
+		numadd = delta_x;
+		numpixels = delta_y;
+	}
+
+	int prevX = startX;
+	int prevY = startY;
+
+	for (int curpixel = 0; curpixel <= numpixels; curpixel++)
+	{
+		if (terrain.IsPixelSolid(x, y))
+		{
+			tuple<Vector2D, Vector2D> raycastInfo;
+			raycastInfo = make_tuple(Vector2D(prevX, prevY), Vector2D(x, y));
+			return raycastInfo;
+		}
+
+		prevX = x;
+		prevY = y;
+
+		num += numadd;
+
+		if (num >= den)
+		{
+			num -= den;
+			x += xinc1;
+			y += yinc1;
+		}
+
+		x += xinc2;
+		y += yinc2;
+
+		return make_tuple(Vector2D(ERROR_CODE, ERROR_CODE), Vector2D(ERROR_CODE, ERROR_CODE)); // 충돌없음
+	}
+}
+
+bool IsValidPos(int x, int y)
+{
+	if (x < 0 || y < 0 || x > WIDTH || y > HEIGHT)
+		return false;
+	else
+		return true;
+}
+bool IsValidPos(Vector2D pos)
+{
+	return IsValidPos(pos.x, pos.y);
 }

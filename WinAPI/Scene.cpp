@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "Physics.h"
 
 bool Scene::DeleteAllGameObject()
 {
@@ -13,6 +14,7 @@ bool Scene::DeleteAllGameObject()
 bool Scene::AddGameObject(string key, Object* value)
 {
 	objectList[key] = value;
+
 	return true;
 }
 

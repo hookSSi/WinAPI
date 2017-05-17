@@ -3,8 +3,15 @@
 #include "TextUI.h"
 #include "Scene.h"
 #include "Map.h"
+#include "Bullet.h"
+#include "Physics.h"
 
 HINSTANCE g_hInst;
+
+void CreateDynamicPixel(int x, int y)
+{
+	
+}
 
 bool Game::Initilize()
 {
@@ -60,6 +67,7 @@ bool Game::Update()
 		if (scene_list.size() > currentScene)
 		{
 			scene_list[currentScene]->Update();
+			Physics::GetInstance()->Update();
 			return true;
 		}
 		else
@@ -146,6 +154,8 @@ bool Game::InputHandle(WPARAM wParam)
 	case 'D':
 	case 'd':
 		break;
+	case WM_LBUTTONDOWN:
+		break;
 	case VK_ESCAPE:
 		PostQuitMessage(0);
 		break;
@@ -155,4 +165,16 @@ bool Game::InputHandle(WPARAM wParam)
 	}
 
 	return true;
+}
+
+void Game::CreateBullet(LPARAM lParam)
+{
+	Bullet *bullet = new Bullet();
+
+	bullet->position = Vector2D(LOWORD(lParam), HIWORD(lParam));
+	bullet->SetSize(Vector2D(3, 3));
+	bullet->velocity = Vector2D(0, 1);
+	scene_list[currentScene]->AddGameObject("Bullet", (Object*)bullet);
+
+	Physics::GetInstance()->AddObject(bullet);
 }

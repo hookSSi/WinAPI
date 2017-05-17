@@ -1,6 +1,6 @@
 #include "Tank.h"
 
-Tank::Tank() : Object(), velocity(0), fireDelay(0), jumpDelay(0), dashDelay(0){ direction = Vector2D(1, 0); };
+Tank::Tank() : Object(), fireDelay(0), jumpDelay(0), dashDelay(0){ velocity = Vector2D(1, 0); };
 
 void Tank::Draw(HWND hWnd, HDC hdc)
 {
@@ -26,13 +26,12 @@ bool Tank::Update()
 	return false;
 }
 
-void Tank::Move(Vector2D p_direction)
+void Tank::Move(Vector2D p_velocity)
 {
-	this->SetDirection(p_direction);
-	this->position += (this->direction * this->velocity);
+	this->position += this->velocity;
 }
 
-void Tank::Move(){	Move(this->direction);}
+void Tank::Move(){	Move(this->velocity);}
 
 void Tank::Fire()
 {

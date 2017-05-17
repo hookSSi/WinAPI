@@ -10,11 +10,10 @@ public:
 	Tank();
 	virtual ~Tank(){};
 
-	void SetVelocity(float value){ velocity = value; }
+	void SetVelocity(const Vector2D& p_velocity){ velocity = p_velocity; }
 	void SetFireDelay(float value){ fireDelay = value; }
 	void SetJumpDelay(float value){ jumpDelay = value; }
 	void SetDashDelay(float value){ dashDelay = value; }
-	void SetDirection(const Vector2D& direction){ this->direction = direction; }
 
 	virtual void Draw(HWND hWnd, HDC hdc); // 탱크를 그림
 	virtual bool Update(); // 탱크 업데이트
@@ -29,8 +28,7 @@ public:
 	// 대쉬
 	virtual void Dash();
 private:
-	Vector2D direction;
-	float velocity = 0;
+	Vector2D velocity;
 	float fireDelay = 0;
 	float jumpDelay = 0;
 	float dashDelay = 0;
@@ -55,7 +53,7 @@ class NormalTankBuilder : public TankBuilder
 	NormalTankBuilder() : TankBuilder(){}
 	~NormalTankBuilder(){}
 
-	virtual void BuildVelocity() const { product->SetVelocity(1); }
+	virtual void BuildVelocity() const { product->SetVelocity(Vector2D(1,1)); }
 	virtual void BuildFireDelay() const { product->SetFireDelay(1); }
 	virtual void BuildJumpDelay() const { product->SetJumpDelay(1); }
 	virtual void BuildDashDelay() const { product->SetDashDelay(1); }
