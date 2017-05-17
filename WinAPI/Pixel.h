@@ -8,7 +8,7 @@ public:
 	Vector2D position;
 
 	Pixel():isSolid(false){};
-	Pixel(Vector2D p_postion) :isSolid(false){ this->position = p_postion; }
+	Pixel(Vector2D& p_postion) :isSolid(false){ this->position = p_postion; }
 	Pixel(const Pixel& other);
 	~Pixel(){};
 
@@ -30,7 +30,7 @@ public:
 	float bounceFriction = 0.85f; // Åº¼º·Â
 
 	Dynamic_Pixel():Object(){};
-	Dynamic_Pixel(Vector2D p_postion){ this->position = p_postion; this->lastPosition = lastPosition; }
+	Dynamic_Pixel(Vector2D& p_postion){ this->position = p_postion; this->lastPosition = lastPosition; }
 	~Dynamic_Pixel(){};
 
 	bool FixedUpdate(float time);

@@ -20,7 +20,7 @@ public:
 
 	// 이동
 	virtual void Move();
-	virtual void Move(Vector2D p_direction);
+	virtual void Move(Vector2D& p_direction);
 	// 발사
 	virtual void Fire();
 	// 점프

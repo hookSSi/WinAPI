@@ -133,7 +133,7 @@ float PerlinNoise::PerlinNoise_1D(float x, float persistance, int octave)
 	return total;
 }
 
-tuple<Vector2D,Vector2D> Raycast(Map terrain, int startX, int startY, int lastX, int lastY)
+bool Raycast(Map& terrain, int startX, int startY, int lastX, int lastY)
 {
 	int delta_x = abs(lastX - startX);
 	int delta_y = abs(lastY - startY);
@@ -177,7 +177,7 @@ tuple<Vector2D,Vector2D> Raycast(Map terrain, int startX, int startY, int lastX,
 	else
 	{
 		xinc2 = 0;
-		yinc2 = 0;
+		yinc1 = 0;
 		den = delta_y;
 		num = delta_y / 2;
 		numadd = delta_x;
@@ -191,9 +191,7 @@ tuple<Vector2D,Vector2D> Raycast(Map terrain, int startX, int startY, int lastX,
 	{
 		if (terrain.IsPixelSolid(x, y))
 		{
-			tuple<Vector2D, Vector2D> raycastInfo;
-			raycastInfo = make_tuple(Vector2D(prevX, prevY), Vector2D(x, y));
-			return raycastInfo;
+			return true;
 		}
 
 		prevX = x;
@@ -209,10 +207,10 @@ tuple<Vector2D,Vector2D> Raycast(Map terrain, int startX, int startY, int lastX,
 		}
 
 		x += xinc2;
-		y += yinc2;
-
-		return make_tuple(Vector2D(ERROR_CODE, ERROR_CODE), Vector2D(ERROR_CODE, ERROR_CODE)); // 충돌없음
+		y += yinc2;	
 	}
+
+	return false;
 }
 
 bool IsValidPos(int x, int y)
@@ -222,7 +220,7 @@ bool IsValidPos(int x, int y)
 	else
 		return true;
 }
-bool IsValidPos(Vector2D pos)
+bool IsValidPos(Vector2D& pos)
 {
 	return IsValidPos(pos.x, pos.y);
 }

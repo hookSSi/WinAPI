@@ -1,22 +1,36 @@
 #include "Bullet.h"
 #include "Game.h"
 #include "Map.h"
+#include "Physics.h"
+
+int Bullet::counter = 1;
+
+Bullet::Bullet() :Object()
+{
+	counter++;
+}
 
 bool Bullet::FixedUpdate(float time)
 {
 	this->position += this->velocity * time;
 
-	Map map = Game::GetInstance()->GetMap();
-
-	if (Raycast(map, lastPosition.x, lastPosition.y, position.x, position.y)._Myfirst._Val.isValid())
-	{
-		Explode(5);
-	}
 	return true;
 }
 
 bool Bullet::Update()
-{
+{ 
+	Map map = Game::GetInstance()->GetMap();
+
+	/*bool IsCollision = Raycast(map, lastPosition.x, lastPosition.y, position.x, position.y);
+
+	if (IsCollision)
+	{
+		Explode(5);
+	}*/
+
+	if (!position.isValid())
+		this->SelfDestroy();
+
 	return true;
 }
 
@@ -30,7 +44,7 @@ bool Bullet::Explode(int radius)
 		{
 			if (IsValidPos(x, y)) // 유효한 좌표?
 			{
-				if (pow(x - position.x, 2) + pow(y - position.y, 2) < radius * radius)
+				if (pow(x - position.x, 2) + pow(y - position.y, 2) <= radius * radius)
 				{
 					if (map.IsPixelSolid(x, y))
 					{
@@ -40,6 +54,8 @@ bool Bullet::Explode(int radius)
 			}
 		}
 	}
+
+	this->SelfDestroy();
 
 	return true;
 }

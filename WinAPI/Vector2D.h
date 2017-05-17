@@ -30,13 +30,7 @@ public:
 
 	const float Magnitude() const;
 
-	bool isValid() const 
-	{ 
-		if (this->x <= -333 || this->y <= -333)
-			return false;
-		else
-			return true;
-	}
+	bool isValid() const;
 
 	~Vector2D(){};
 };

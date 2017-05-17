@@ -34,9 +34,8 @@ namespace PerlinNoise
 	float PerlinNoise_1D(float x, float persistance, int octave);
 }
 
-static const int ERROR_CODE = -333;
 // 충돌 처리
-std::tuple<Vector2D, Vector2D> Raycast(Map terrain, int startX, int startY, int lastX, int lastY);
+bool Raycast(Map& terrain, int startX, int startY, int lastX, int lastY);
 
 bool IsValidPos(int x, int y);
-bool IsValidPos(Vector2D pos);
+bool IsValidPos(Vector2D& pos);

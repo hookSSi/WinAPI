@@ -26,7 +26,7 @@ bool Tank::Update()
 	return false;
 }
 
-void Tank::Move(Vector2D p_velocity)
+void Tank::Move(Vector2D& p_velocity)
 {
 	this->position += this->velocity;
 }

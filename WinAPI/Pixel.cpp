@@ -18,7 +18,7 @@ bool Dynamic_Pixel::Update()
 {
 	Map map = Game::GetInstance()->GetMap();
 
-	if (Raycast(map, lastPosition.x, lastPosition.y, position.x, position.y)._Myfirst._Val.isValid())
+	if (Raycast(map, lastPosition.x, lastPosition.y, position.x, position.y))
 	{
 		if (velocity.Magnitude() <= stickness)
 		{

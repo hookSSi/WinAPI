@@ -15,6 +15,7 @@ public:
 	bool Update();
 
 	void AddObject(Object* object){ object_list.push_back(object); }
+	void DeleteObject(Object* object);
 
 	Physics() :leftOverDeltaTie(0), fixedDeltaTime(FPS / 1000.0f){}
 	virtual ~Physics(){}

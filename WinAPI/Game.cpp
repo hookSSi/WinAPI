@@ -66,15 +66,9 @@ bool Game::Update()
 	{
 		if (scene_list.size() > currentScene)
 		{
-			scene_list[currentScene]->Update();
-			Physics::GetInstance()->Update();
+			scene_list[currentScene]->Update(); // Update
+			Physics::GetInstance()->Update(); // FixedUpdate
 			return true;
-		}
-		else
-		{
-			_ASSERTE(!"존재하지 않는 scene을 update하려 했습니다.");
-			exit(0);
-			return false;
 		}
 	}
 }
@@ -89,12 +83,6 @@ bool Game::Draw(HWND hWnd, HDC hdc)
 			
 			map_list[currentScene]->Draw(hWnd,hdc);
 			return true;
-		}
-		else
-		{
-			_ASSERTE(!"존재하지 않는 scene을 draw하려 했습니다.");
-			exit(0);
-			return false;
 		}
 	}
 }
@@ -133,11 +121,6 @@ bool Game::LoadScene()
 	case 1:
 		scene_list[currentScene] = CreateScene2(builder);
 		break;
-	default:
-		_ASSERTE(!"존재하지 않는 Scene을 Load하려고 했습니다.");
-		exit(0);
-		return false;
-		break;
 	}
 
 	is_scene_loaded = true;
@@ -171,10 +154,15 @@ void Game::CreateBullet(LPARAM lParam)
 {
 	Bullet *bullet = new Bullet();
 
-	bullet->position = Vector2D(LOWORD(lParam), HIWORD(lParam));
+	bullet->SetPosition(Vector2D(LOWORD(lParam), HIWORD(lParam)));
 	bullet->SetSize(Vector2D(3, 3));
-	bullet->velocity = Vector2D(0, 1);
-	scene_list[currentScene]->AddGameObject("Bullet", (Object*)bullet);
+	bullet->velocity = Vector2D(0, 30);
 
 	Physics::GetInstance()->AddObject(bullet);
+	int count = bullet->counter;
+
+	string str = "Bullet";
+
+	bool success = scene_list[currentScene]->AddGameObject(str, bullet);
+	
 }
