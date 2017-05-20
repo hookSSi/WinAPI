@@ -28,7 +28,8 @@ public:
 	bool SetWD_STYLE(const int style){ this->WD_STYLE = style; }
 
 	
-	const Map& GetMap() const { return *map_list[currentScene]; }// ¸Ê ¹ÝÈ¯
+	Map* GetMap() { return (this->map_list[currentScene]); }// ¸Ê ¹ÝÈ¯
+	Scene* GetScene() { return (this->scene_list[currentScene]); }
 
 	void CreateBullet(LPARAM lParam);
 private:
@@ -42,4 +43,6 @@ private:
 	int currentScene;
 	// ¸Ê
 	vector<Map*> map_list; // ÁöÇü ¸®½ºÆ®
+
+	bool isLoaded = { false };
 };

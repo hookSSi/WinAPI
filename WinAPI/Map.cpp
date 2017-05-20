@@ -1,17 +1,17 @@
 #include "Map.h"
 #include "Pixel.h"
 
-Map::Map()
+Map::Map() : _persistance(0), _octave(0)
 {
 	maxY_list.reserve(WIDTH);
+	_terrain.reserve(WIDTH);
 
 	for (int x = 0; x < WIDTH; x++)
 	{
-		vector<Pixel> column;
+		vector<Pixel*> column;
 		for (int y = 0; y < HEIGHT; y++)
 		{
-			Pixel pixel;
-			pixel.position = Vector2D(0,0);
+			Pixel *pixel = new Pixel(Vector2D(0, 0));
 			column.push_back(pixel);
 		}
 		_terrain.push_back(column);
@@ -36,8 +36,8 @@ bool Map::Initialize()
 		maxY_list[x] = (int)(350 - maxY);
 		for (int y1 = (int)(350 - maxY), y2 = 0; (350 - maxY) + y2 <= HEIGHT; y1++, y2++)
 		{
-			_terrain[x][y1].position = Vector2D((float)x, (350-maxY) + y2);
-			_terrain[x][y1].SetSolid(true);
+			_terrain[x][y1]->position = Vector2D((float)x, (350 - maxY) + y2);
+			_terrain[x][y1]->SetSolid(true);
 		}
 	}
 
@@ -61,7 +61,7 @@ bool Map::Draw(HWND hWnd, HDC hdc)
 
 		for (int y = maxY_list[x]; y < HEIGHT; y++)
 		{
-			if (!_terrain[x][y].IsSolid())
+			if (!_terrain[x][y]->IsSolid())
 			{
 				mode = false;
 				break;
@@ -70,15 +70,15 @@ bool Map::Draw(HWND hWnd, HDC hdc)
 
 		if (mode) // 중간에 픽셀이 비지 않으면 선으로 처리
 		{
-			Rectangle(hdc, x, _terrain[x][maxY_list[x]].position.y, x + 1, HEIGHT);
+			Rectangle(hdc, x, _terrain[x][maxY_list[x]]->position.y, x + 1, HEIGHT);
 		}	
 		else // 중간에 픽셀이 비면 일일히 처리
 		{
 			for (int y = maxY_list[x]; y < HEIGHT; y++)
 			{
-				if (_terrain[x][y].IsSolid())
+				if (_terrain[x][y]->IsSolid())
 				{
-					SetPixel(hdc, x, _terrain[x][y].position.y, WHITE_COLOR);
+					SetPixel(hdc, x, _terrain[x][y]->position.y, WHITE_COLOR);
 				}
 			}
 		}
@@ -115,11 +115,11 @@ bool Map::Draw_norm(HWND hWnd, HDC hdc, bool toggle)
 		{
 			for (int y = maxY_list[x]; y < HEIGHT; y++)
 			{
-				if (_terrain[x][y].IsSolid())
+				if (_terrain[x][y]->IsSolid())
 				{
-					Vector2D norm = GetNormal(x, _terrain[x][y].position.y, boxSize) * scale;
-					MoveToEx(hdc, x, _terrain[x][y].position.y, NULL);
-					LineTo(hdc, x + norm.x, _terrain[x][y].position.y + norm.y);
+					Vector2D norm = GetNormal(x, _terrain[x][y]->position.y, boxSize) * scale;
+					MoveToEx(hdc, x, _terrain[x][y]->position.y, NULL);
+					LineTo(hdc, x + norm.x, _terrain[x][y]->position.y + norm.y);
 					break;
 				}
 			}
@@ -145,7 +145,7 @@ Vector2D Map::GetNormal(int x, int y, int boxSize)
 			}
 			else
 			{
-				if (_terrain[x + w][y + h].IsSolid())
+				if (_terrain[x + w][y + h]->IsSolid())
 				{
 					avg = avg - Vector2D(w, h);
 				}

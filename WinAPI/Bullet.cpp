@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Map.h"
 #include "Physics.h"
+#include "Scene.h"
 
 int Bullet::counter = 1;
 
@@ -12,6 +13,7 @@ Bullet::Bullet() :Object()
 
 bool Bullet::FixedUpdate(float time)
 {
+	this->lastPosition = this->position;
 	this->position += this->velocity * time;
 
 	return true;
@@ -19,36 +21,67 @@ bool Bullet::FixedUpdate(float time)
 
 bool Bullet::Update()
 { 
-	Map map = Game::GetInstance()->GetMap();
-
-	/*bool IsCollision = Raycast(map, lastPosition.x, lastPosition.y, position.x, position.y);
+	bool IsCollision = Raycast(lastPosition.x, lastPosition.y, position.x, position.y);
 
 	if (IsCollision)
 	{
-		Explode(5);
-	}*/
-
-	if (!position.isValid())
-		this->SelfDestroy();
+		Explode(10);
+	}
+	else
+	{
+		if (!position.isValid())
+			this->SelfDestroy();
+	}
 
 	return true;
 }
 
 bool Bullet::Explode(int radius)
 {
-	Map map = Game::GetInstance()->GetMap();
-
+	Map *map = Game::GetInstance()->GetMap();
+	
 	for (int x = position.x - radius; x <= position.x + radius; x++)
 	{
-		for (int y = position.y - radius; y <= position.y + radius; x++)
+		for (int y = position.y - radius; y <= position.y + radius; y++)
 		{
 			if (IsValidPos(x, y)) // 유효한 좌표?
 			{
-				if (pow(x - position.x, 2) + pow(y - position.y, 2) <= radius * radius)
+				float length = ((x - position.x) * (x - position.x) + (y - position.y) * (y - position.y));
+				float r = radius * radius;
+
+				if (length <= r)
 				{
-					if (map.IsPixelSolid(x, y))
+					if (map->IsPixelSolid(x, y))
 					{
-						map.RemoveStaticPixel(x, y);
+						map->RemoveStaticPixel(x, y);
+
+						/* 동적 픽셀 생성 */
+						Dynamic_Pixel *pixel = new Dynamic_Pixel();
+
+						pixel->SetPosition(Vector2D(x, y));
+						pixel->SetSize(Vector2D(3, 3));
+
+						float distanceRate = 1 - length / r;
+						float speed = 200 * distanceRate;
+
+						float xDiff = x - position.x;
+						float yDiff = y - position.y;
+
+						float velX = speed * (xDiff + (rand() % 20 - 10));
+						float velY = speed * (yDiff + (rand() % 20 - 10));
+
+						pixel->velocity = Vector2D(velX, velY);
+
+						string str = "pixel";
+
+						Scene *scene = Game::GetInstance()->GetScene();
+
+						bool success = scene->AddGameObject(str, pixel);
+
+						if (success)
+						{
+							Physics::GetInstance()->AddObject(pixel);
+						}
 					}
 				}
 			}

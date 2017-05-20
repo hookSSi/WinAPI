@@ -10,7 +10,7 @@ public:
 
 	Bullet();
 	Bullet(Vector2D& p_postion){ this->position = p_postion; this->lastPosition = lastPosition; }
-	~Bullet(){};
+	~Bullet(){ counter--; };
 
 	virtual void Draw(HWND hWnd, HDC hdc);
 	bool FixedUpdate(float time);

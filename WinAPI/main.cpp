@@ -8,8 +8,6 @@ static HBITMAP hBit;
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	, LPSTR lpszCmdParam, int nCmdShow)
 {
-	Game::GetInstance()->Initilize();
-
 	HWND hWnd = Game::GetInstance()->GenerateGameWindow(hInstance, lpszClass, (WNDPROC)WndProc); // 게임 윈도우 생성
 
 	ShowWindow(hWnd, nCmdShow); // 전체화면
@@ -60,6 +58,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	switch (iMessage) {
 	case WM_CREATE:
+		Game::GetInstance()->Initilize();
 		Game::GetInstance()->Start();
 		SetTimer(hWnd, 1, FPS, (TIMERPROC)(TimerProc));
 		return 0;

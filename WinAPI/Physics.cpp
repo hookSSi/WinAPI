@@ -11,17 +11,17 @@ bool Physics::Update()
 
 		int timeStempAmt = (int)((deltaTimeMS.count() + this->leftOverDeltaTie) / this->fixedDeltaTime);
 
-		if (timeStempAmt == 0) // 0이 되어 멈추는 걸 방지
-			timeStempAmt = 1;
+		timeStempAmt = (timeStempAmt < 1) ? timeStempAmt : 1;
 
 		this->leftOverDeltaTie = deltaTimeMS.count() - (timeStempAmt * this->fixedDeltaTime);
 
-		float timeToUse = timeStempAmt * this->fixedDeltaTime;
-
-	
-		for (auto iter = object_list.begin(); iter != object_list.end(); iter++)
+		for (int i = 1; i <= timeStempAmt; i++)
 		{
-			(*iter)->FixedUpdate(timeToUse);
+			for (auto iter = object_list.begin(); iter != object_list.end(); iter++)
+			{
+				if ((*iter)->isActive)
+					(*iter)->FixedUpdate(this->fixedDeltaTime);
+			}
 		}
 
 		this->previousTime = this->currentTime;

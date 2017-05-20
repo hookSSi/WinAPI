@@ -3,6 +3,7 @@
 #include "Tank.h"
 #include "TextUI.h"
 #include "Map.h"
+#include "Game.h"
 
 void FillSurface(HWND hWnd, HDC hdc, BOOL mode)
 {
@@ -133,8 +134,10 @@ float PerlinNoise::PerlinNoise_1D(float x, float persistance, int octave)
 	return total;
 }
 
-bool Raycast(Map& terrain, int startX, int startY, int lastX, int lastY)
+bool Raycast(int startX, int startY, int lastX, int lastY)
 {
+	Map *terrain = Game::GetInstance()->GetMap();
+
 	int delta_x = abs(lastX - startX);
 	int delta_y = abs(lastY - startY);
 
@@ -189,7 +192,12 @@ bool Raycast(Map& terrain, int startX, int startY, int lastX, int lastY)
 
 	for (int curpixel = 0; curpixel <= numpixels; curpixel++)
 	{
-		if (terrain.IsPixelSolid(x, y))
+		if (!IsValidPos(x, y))
+		{
+			return false;
+		}
+
+		if (terrain->IsPixelSolid(x, y))
 		{
 			return true;
 		}
@@ -215,7 +223,7 @@ bool Raycast(Map& terrain, int startX, int startY, int lastX, int lastY)
 
 bool IsValidPos(int x, int y)
 {
-	if (x < 0 || y < 0 || x > WIDTH || y > HEIGHT)
+	if (x < 0 || y < 0 || x >= WIDTH|| y >= HEIGHT)
 		return false;
 	else
 		return true;

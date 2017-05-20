@@ -22,11 +22,18 @@ bool Game::Initilize()
 	scene_list.push_back(CreateScene1(builder));
 	scene_list.push_back(CreateScene2(builder));
 
+	map_list.reserve(2);
+
 	Map *map1 = new Map();
 	if (map1->Initialize())
 	{
 		map_list.push_back(map1);
 	}
+
+	this->SetScene(0);
+	
+	this->isLoaded = true;
+
 	return true;
 }
 
@@ -55,7 +62,6 @@ HWND Game::GenerateGameWindow(HINSTANCE hInstance, LPCWSTR lpszClass, WNDPROC Wn
 
 bool Game::Start()
 {
-	this->SetScene(0);
 	this->LoadScene();
 	return true;
 }
@@ -129,40 +135,62 @@ bool Game::LoadScene()
 
 bool Game::InputHandle(WPARAM wParam)
 {
-	switch (wParam)
+	if (this->isLoaded)
 	{
-	case 'A':
-	case 'a':
-		break;
-	case 'D':
-	case 'd':
-		break;
-	case WM_LBUTTONDOWN:
-		break;
-	case VK_ESCAPE:
-		PostQuitMessage(0);
-		break;
-	default:
-		return false;
-		break;
+		switch (wParam)
+		{
+		case 'A':
+		case 'a':
+			break;
+		case 'D':
+		case 'd':
+			break;
+		case WM_LBUTTONDOWN:
+			break;
+		case VK_ESCAPE:
+			PostQuitMessage(0);
+			break;
+		default:
+			return false;
+			break;
+		}
 	}
-
+	
 	return true;
 }
 
 void Game::CreateBullet(LPARAM lParam)
 {
-	Bullet *bullet = new Bullet();
+	if (this->isLoaded)
+	{
+		Bullet *bullet = new Bullet();
 
-	bullet->SetPosition(Vector2D(LOWORD(lParam), HIWORD(lParam)));
-	bullet->SetSize(Vector2D(3, 3));
-	bullet->velocity = Vector2D(0, 30);
+		bullet->SetPosition(Vector2D(LOWORD(lParam), HIWORD(lParam)));
+		bullet->SetSize(Vector2D(3, 3));
+		bullet->velocity = Vector2D(0, 300);
 
-	Physics::GetInstance()->AddObject(bullet);
-	int count = bullet->counter;
+		string str = "Bullet";
 
-	string str = "Bullet";
+		bool success = scene_list[currentScene]->AddGameObject(str, bullet);
 
-	bool success = scene_list[currentScene]->AddGameObject(str, bullet);
-	
+		if (success)
+		{
+			Physics::GetInstance()->AddObject(bullet);
+		}
+
+	/*	Dynamic_Pixel *pixel = new Dynamic_Pixel();
+
+		pixel->SetPosition(Vector2D(LOWORD(lParam), HIWORD(lParam)));
+		pixel->SetSize(Vector2D(3, 3));
+		pixel->velocity = Vector2D(0, 300);
+
+		string str = "Bullet";
+
+		bool success = scene_list[currentScene]->AddGameObject(str, pixel);
+
+		if (success)
+		{
+			Physics::GetInstance()->AddObject(pixel);
+		}*/
+	}
 }

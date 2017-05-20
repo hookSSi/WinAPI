@@ -16,11 +16,12 @@ bool Scene::DeleteAllGameObject()
 
 bool Scene::AddGameObject(string& key, Object* value)
 {
+	// 어떻게 효율적으로 고치지?
 	if (objectList[key] != nullptr)
 	{
-		string buffer = key + to_string(objectList.size());
-
-		objectList[buffer] = value;
+		srand((unsigned)time(nullptr));
+		string buffer = key + "-" + to_string(rand() % 100 + rand() % 13);
+		this->AddGameObject(buffer, value);
 	}
 	else
 		objectList[key] = value;

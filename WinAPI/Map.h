@@ -13,13 +13,13 @@ public:
 	bool Initialize();
 	bool Draw(HWND hWnd, HDC hdc);
 	bool Draw_norm(HWND hWnd, HDC hdc, bool toggle);
-	bool IsPixelSolid(int x, int y){ return _terrain[x][y].IsSolid(); }
-	bool RemoveStaticPixel(int x, int y){ _terrain[x][y].SetSolid(false); return true; }
-	bool AddStaticPixel(int x, int y) { _terrain[x][y].SetSolid(true); return true; }
+	bool IsPixelSolid(int x, int y){ return this->_terrain[x][y]->IsSolid(); }
+	bool RemoveStaticPixel(int x, int y){ _terrain[x][y]->SetSolid(false); return true; }
+	bool AddStaticPixel(int x, int y) { _terrain[x][y]->SetSolid(true); return true; }
 
 	Vector2D GetNormal(int x, int y, int boxSize);
 private:
-	using TERRAIN = vector<vector<Pixel>>; 
+	using TERRAIN = vector<vector<Pixel*>>; 
 	// ÇÈ¼¿ ¸®½ºÆ®
 	TERRAIN _terrain; 
 	vector<int> maxY_list;

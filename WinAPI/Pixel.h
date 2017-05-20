@@ -26,15 +26,19 @@ public:
 	Vector2D lastPosition;
 	Vector2D velocity;
 	
-	float stickness = 1500; // stickness 이하의 속도면 픽셀이 고정
-	float bounceFriction = 0.85f; // 탄성력
+	float stickness; // stickness 이하의 속도면 픽셀이 고정
+	float bounceFriction; // 탄성력
 
-	Dynamic_Pixel():Object(){};
-	Dynamic_Pixel(Vector2D& p_postion){ this->position = p_postion; this->lastPosition = lastPosition; }
+	Dynamic_Pixel():Object(),stickness(100), bounceFriction(0.85f){};
+	Dynamic_Pixel(Vector2D& p_postion):stickness(100), bounceFriction(0.85f){ this->position = p_postion; this->lastPosition = lastPosition; }
 	~Dynamic_Pixel(){};
 
+	virtual void Draw(HWND hWnd, HDC hdc);
 	bool FixedUpdate(float time);
 	bool Update();
+	bool SelfDestroy(){ this->isActive = false; return true; }
+
+	bool SetPosition(Vector2D& pos){ this->position = pos; this->lastPosition = pos; return true; }
 private:
 	bool Bounce();
 	bool Stick();
