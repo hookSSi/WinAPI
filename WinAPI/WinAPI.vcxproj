@@ -85,6 +85,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pixel.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -105,6 +106,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Scene.h" />

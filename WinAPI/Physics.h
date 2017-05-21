@@ -12,13 +12,16 @@ public:
 	int leftOverDeltaTie; // 남은 시간
 	const float fixedDeltaTime;
 
+	Vector2D gravityAmt;
+	bool isGravity; // 중력?
+
 	bool Update();
 
 	void AddObject(Object* object){ object_list.push_back(object); }
 	void DeleteObject(Object* object);
 
-	Physics() :leftOverDeltaTie(0), fixedDeltaTime(FPS / 1000.0f){}
+	Physics() :leftOverDeltaTie(0), fixedDeltaTime(FPS / 1000.0f), isGravity(true){ gravityAmt = Vector2D(0.0f, 9.8f); }
 	virtual ~Physics(){}
 private:
-	vector<Object*> object_list;
+	list<Object*> object_list;
 };

@@ -1,7 +1,10 @@
 #include "Object.h"
 
+unsigned int Object::counter = 0;
+
 inline Object::Object(Object &other)
 {
+	type = OBJECT_TYPE::OBJECT;
 	this->position = other.position;
 	this->rotation = other.rotation;
 	this->scale = other.scale;

@@ -20,7 +20,9 @@ bool Physics::Update()
 			for (auto iter = object_list.begin(); iter != object_list.end(); iter++)
 			{
 				if ((*iter)->isActive)
+				{
 					(*iter)->FixedUpdate(this->fixedDeltaTime);
+				}	
 			}
 		}
 
@@ -32,12 +34,16 @@ bool Physics::Update()
 
 void Physics::DeleteObject(Object* object)
 {
-	for (auto iter = object_list.begin(); iter != object_list.end(); iter++)
+	for (auto iter = object_list.begin(); iter != object_list.end();)
 	{
 		if ((*iter)->isActive == false)
 		{
 			iter = object_list.erase(iter);
 			return;
+		}
+		else
+		{
+			iter++;
 		}
 	}
 }

@@ -1,11 +1,12 @@
 #include "Scene.h"
 #include "Physics.h"
+#include "ObjectPool.h"
 
 bool Scene::DeleteAllGameObject()
 {
 	for (auto iter = objectList.begin(); iter != objectList.end(); iter++)
 	{
-		Object* temp = iter->second;
+		Object* temp = *iter;
 		Physics::GetInstance()->DeleteObject(temp);
 		iter = objectList.erase(iter);
 		delete temp;
@@ -14,46 +15,51 @@ bool Scene::DeleteAllGameObject()
 	return true;
 }
 
-bool Scene::AddGameObject(string& key, Object* value)
+bool Scene::AddGameObject(Object* value)
 {
-	// 어떻게 효율적으로 고치지?
-	if (objectList[key] != nullptr)
-	{
-		srand((unsigned)time(nullptr));
-		string buffer = key + "-" + to_string(rand() % 100 + rand() % 13);
-		this->AddGameObject(buffer, value);
-	}
-	else
-		objectList[key] = value;
+	objectList.push_back(value);
 
 	return true;
 }
-
-bool Scene::DeleteGameObject(string& key)
-{
-	delete(objectList[key]);
-	objectList.erase(key);
-	return true;
-}
-
-Object& Scene::GetGameObject(string& key){ return *objectList[key]; }
 
 bool Scene::Update()
 {
-	for (auto iter = objectList.begin(); iter != objectList.end(); iter++)
+	for (auto iter = objectList.begin(); iter != objectList.end();)
 	{
-		if (iter->second->isActive == false)
+		if ((*iter)->isActive) // Active == true
 		{
-			Object* temp = iter->second;
-			Physics::GetInstance()->DeleteObject(temp);
-			iter = objectList.erase(iter);
-			delete temp;
-			continue;
+			(*iter)->Update();
+			iter++;
 		}
-
-		if (iter->second != nullptr)
+		else // Active == false
 		{
-			iter->second->Update();
+			if ((*iter)->type == OBJECT_TYPE::DYNAMIC_PIXEL)
+			{
+				Object* temp = (*iter);
+				Physics::GetInstance()->DeleteObject(temp);
+				iter = objectList.erase(iter);
+				ObjectPool::GetInstance()->Release(temp);
+				continue;
+			}
+			else if ((*iter)->type == OBJECT_TYPE::BULLET)
+			{
+				Object* temp = (*iter);
+				Physics::GetInstance()->DeleteObject(temp);
+				iter = objectList.erase(iter);
+				ObjectPool::GetInstance()->Release(temp);
+				continue;
+			}
+			//else
+			//{
+			//	if ((*iter)->isErase) // 오브젝트 삭제
+			//	{
+			//		Object* temp = (*iter);
+			//		Physics::GetInstance()->DeleteObject(temp);
+			//		iter = objectList.erase(iter);
+			//		delete temp;
+			//		continue;
+			//	}
+			//}
 		}
 	}
 
@@ -64,14 +70,14 @@ bool Scene::Draw(HWND hWnd, HDC hdc)
 {
 	for (auto iter = objectList.begin(); iter != objectList.end(); iter++)
 	{
-		iter->second->Draw(hWnd, hdc);
+		(*iter)->Draw(hWnd, hdc);
 	}
 
 	return true;
 }
 
-bool Scene_Builder::AddGameObject(string key, Object* value)
+bool Scene_Builder::AddGameObject(Object* value)
 {
-	product->AddGameObject(key, value);
+	product->AddGameObject(value);
 	return true;
 }

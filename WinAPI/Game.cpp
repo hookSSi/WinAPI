@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "Bullet.h"
 #include "Physics.h"
+#include "ObjectPool.h"
 
 HINSTANCE g_hInst;
 
@@ -33,6 +34,8 @@ bool Game::Initilize()
 	this->SetScene(0);
 	
 	this->isLoaded = true;
+
+	ObjectPool::GetInstance();
 
 	return true;
 }
@@ -163,15 +166,13 @@ void Game::CreateBullet(LPARAM lParam)
 {
 	if (this->isLoaded)
 	{
-		Bullet *bullet = new Bullet();
+		Bullet *bullet = (Bullet*)ObjectPool::GetInstance()->GetGameObject(OBJECT_TYPE::BULLET);
 
 		bullet->SetPosition(Vector2D(LOWORD(lParam), HIWORD(lParam)));
 		bullet->SetSize(Vector2D(3, 3));
 		bullet->velocity = Vector2D(0, 300);
 
-		string str = "Bullet";
-
-		bool success = scene_list[currentScene]->AddGameObject(str, bullet);
+		bool success = scene_list[currentScene]->AddGameObject(bullet);
 
 		if (success)
 		{

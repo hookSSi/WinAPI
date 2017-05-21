@@ -36,7 +36,7 @@ bool Dynamic_Pixel::Update()
 	{
 		if (!IsValidPos(position.x, position.y))
 		{
-			this->SelfDestroy();
+			this->DeleteSelf();
 		}
 	}
 
@@ -47,6 +47,8 @@ bool Dynamic_Pixel::FixedUpdate(float time)
 {
 	this->lastPosition = position;
 	this->position += velocity * time;
+
+	velocity += Vector2D(0.0f, 9.8f);
 
 	return true;
 }
@@ -66,6 +68,11 @@ bool Dynamic_Pixel::Bounce()
 
 bool Dynamic_Pixel::Stick()
 {
+	Map *terrain = Game::GetInstance()->GetMap();
+
+	terrain->AddStaticPixel(lastPosition.x, lastPosition.y);
+
+	this->DeleteSelf();
 
 	return true;
 }

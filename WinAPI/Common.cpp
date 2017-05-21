@@ -48,8 +48,8 @@ Scene* CreateScene1(Scene_Builder& builder)
 	SpecialTextUI* menu_ui = new SpecialTextUI(L"Press Enter to start", 0.3);
 	menu_ui->position = Vector2D(WIDTH / 2, HEIGHT / 2);
 
-	builder.AddGameObject(string("力格"), subject);
-	builder.AddGameObject(string("Press Enter"), menu_ui);
+	builder.AddGameObject(subject);
+	builder.AddGameObject(menu_ui);
 
 	return builder.GetProduct();
 }
@@ -65,8 +65,8 @@ Scene* CreateScene2(Scene_Builder& builder)
 	SpecialTextUI* menu_ui = new SpecialTextUI(L"Press Enter to start");
 	menu_ui->position = Vector2D(200, 100);
 
-	builder.AddGameObject(string("力格"), subject);
-	builder.AddGameObject(string("Press Enter"), menu_ui);
+	builder.AddGameObject(subject);
+	builder.AddGameObject(menu_ui);
 
 	return builder.GetProduct();
 }

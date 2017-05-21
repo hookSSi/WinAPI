@@ -90,6 +90,9 @@
     <ClInclude Include="Physics.h">
       <Filter>소스 파일\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectPool.h">
+      <Filter>소스 파일\Design Pattern</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -133,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
       <Filter>소스 파일\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPool.cpp">
+      <Filter>소스 파일\Design Pattern</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

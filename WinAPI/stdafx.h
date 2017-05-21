@@ -10,9 +10,12 @@
 // 문자열
 #include<string>
 
-// 컨테이너
-#include<map>
+// STL 컨테이너
 #include<vector>
+#include<list>
+#include<map>
+#include<queue>
+#include<stack>
 
 // 수학
 #include<math.h>
@@ -35,3 +38,10 @@ const float PI = 3.1415927f; // 파이!
 #define RED_COLOR RGB(255,0,0)
 #define GREEN_COLOR RGB(0,255,0)
 #define BLUE_COLOR RGB(0,0,255)
+
+enum class OBJECT_TYPE
+{
+	OBJECT = 1,
+	BULLET = 2,
+	DYNAMIC_PIXEL = 3
+};

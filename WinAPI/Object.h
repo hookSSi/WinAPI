@@ -1,17 +1,20 @@
 #pragma once
-#include<Windows.h>
-#include "Vector2D.h"
+#include "stdafx.h"
 #include "Component.h"
 
 class Object:public Component{
 public:
+	static unsigned int counter;
+
+	OBJECT_TYPE type;
+
 	Vector2D position; // 위치
 	Vector2D rotation; // 회전
 	Vector2D scale; // 크기
 	bool isPhysics; // 물리 영향 받는 지 여부
 
-	Object():isPhysics(false){};
-	virtual ~Object(){};
+	Object() :isPhysics(false){ type = OBJECT_TYPE::OBJECT; counter++; };
+	virtual ~Object(){ };
 
 	Object(Object &other);
 	virtual const Object operator=(Object &other);
