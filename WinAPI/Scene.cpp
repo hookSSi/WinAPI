@@ -4,12 +4,28 @@
 
 bool Scene::DeleteAllGameObject()
 {
-	for (auto iter = objectList.begin(); iter != objectList.end(); iter++)
+	Physics::GetInstance()->DeleteAllObject();
+
+	for (auto iter = objectList.begin(); iter != objectList.end();)
 	{
-		Object* temp = *iter;
-		Physics::GetInstance()->DeleteObject(temp);
-		iter = objectList.erase(iter);
-		delete temp;
+		if ((*iter)->type == OBJECT_TYPE::DYNAMIC_PIXEL)
+		{
+			Object* temp = (*iter);
+			iter = objectList.erase(iter);
+			ObjectPool::GetInstance()->Release(temp);
+		}
+		else if ((*iter)->type == OBJECT_TYPE::BULLET)
+		{
+			Object* temp = (*iter);
+			iter = objectList.erase(iter);
+			ObjectPool::GetInstance()->Release(temp);
+		}
+		else
+		{
+			Object* temp = (*iter);
+			delete temp;
+			iter = objectList.erase(iter);
+		}
 	}
 
 	return true;
@@ -49,6 +65,8 @@ bool Scene::Update()
 				ObjectPool::GetInstance()->Release(temp);
 				continue;
 			}
+
+			/* 메뉴는 메모리 해제 시켜야 할 듯*/
 			//else
 			//{
 			//	if ((*iter)->isErase) // 오브젝트 삭제

@@ -1,9 +1,12 @@
 #pragma once
 #include "Object.h"
+#include "Collision.h"
+
 
 class Bullet : public Object
 {
 public:
+	Collision collision;
 	Vector2D lastPosition;
 	Vector2D velocity;
 
@@ -18,4 +21,5 @@ public:
 	bool SetPosition(Vector2D& pos){ this->position = pos; this->lastPosition = pos; return true; }
 private:
 	bool Explode(int radius);
+	void MakeTrail();
 };

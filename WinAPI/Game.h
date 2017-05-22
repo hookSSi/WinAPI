@@ -5,10 +5,17 @@
 /* 전방 선언 */
 class Scene;
 class Map;
+class TextUI;
 
 class Game : public Singleton < Game >
 {
 public:
+	// 스코어
+	TextUI* player1_scoreUI;
+	int player1_score = { 100 };
+	TextUI* player2_scoreUI;
+	int player2_score = { 100 };
+
 	Game(){};
 	virtual ~Game(){}
 
@@ -35,8 +42,7 @@ public:
 private:
 	// 윈도우 스타일
 	int WD_STYLE = (WS_CAPTION |
-		WS_SYSMENU |
-		WS_THICKFRAME);
+		WS_SYSMENU);
 	// scene 관련 멤버
 	vector<Scene*> scene_list; // scene 리스트
 	bool is_scene_loaded = false; // scene이 로드 됬나요?

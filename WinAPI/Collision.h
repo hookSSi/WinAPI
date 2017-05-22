@@ -5,12 +5,15 @@
 class Collision :public Component
 {
 public:
-	bool debug; // 디버그용 출력 활성화?
-	Vector2D position; // 위치
-	Vector2D scale; // 크기
+	Vector2D position;
+	float radius; // 반지름
+	bool isCollision; // 충돌됨?
 
-	Collision() : debug(false){}
+	bool debug; // 디버그용 출력 활성화?
+
+	Collision() : debug(true),radius(10),isCollision(false){}
 	virtual ~Collision(){}
-	virtual bool Update();
+	virtual bool Update(Vector2D& pos);
 	virtual bool Draw(HWND hWnd, HDC hdc);
+	bool CollisionCheck(Collision& other);
 };

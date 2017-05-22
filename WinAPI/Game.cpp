@@ -6,6 +6,7 @@
 #include "Bullet.h"
 #include "Physics.h"
 #include "ObjectPool.h"
+#include "ParticleManager.h"
 
 HINSTANCE g_hInst;
 
@@ -26,9 +27,16 @@ bool Game::Initilize()
 	map_list.reserve(2);
 
 	Map *map1 = new Map();
+	Map *map2 = new Map();
+
 	if (map1->Initialize())
 	{
 		map_list.push_back(map1);
+	}
+
+	if (map2->Initialize())
+	{
+		map_list.push_back(map2);
 	}
 
 	this->SetScene(0);
@@ -77,6 +85,14 @@ bool Game::Update()
 		{
 			scene_list[currentScene]->Update(); // Update
 			Physics::GetInstance()->Update(); // FixedUpdate
+			ParticleManager::GetInstance()->Update();
+			
+			if (currentScene == 1) // 본 게임의 시작
+			{
+				player1_scoreUI->SetText(player1_score);
+				player1_scoreUI->SetText(player2_score);
+			}
+
 			return true;
 		}
 	}
@@ -89,7 +105,7 @@ bool Game::Draw(HWND hWnd, HDC hdc)
 		if (scene_list.size() > currentScene)
 		{
 			scene_list[currentScene]->Draw(hWnd, hdc);
-			
+			ParticleManager::GetInstance()->Draw(hWnd,hdc);
 			map_list[currentScene]->Draw(hWnd,hdc);
 			return true;
 		}
@@ -98,6 +114,7 @@ bool Game::Draw(HWND hWnd, HDC hdc)
 
 bool Game::ExitGame()
 {
+	ObjectPool::GetInstance()->FreeAllObject();
 	return true;
 }
 
@@ -152,6 +169,11 @@ bool Game::InputHandle(WPARAM wParam)
 			break;
 		case VK_ESCAPE:
 			PostQuitMessage(0);
+			break;
+		case VK_RETURN:
+			this->SetScene(1);
+			LoadScene();
+			map_list[currentScene]->Initialize();
 			break;
 		default:
 			return false;

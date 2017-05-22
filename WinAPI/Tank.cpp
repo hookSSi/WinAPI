@@ -6,15 +6,20 @@ void Tank::Draw(HWND hWnd, HDC hdc)
 {
 	HBRUSH MyBrush, OldBrush;
 
-	MyBrush = (HBRUSH)CreateSolidBrush(RGB(255,255,255));
+	MyBrush = (HBRUSH)CreateSolidBrush(WHITE_COLOR);
 	OldBrush = (HBRUSH)SelectObject(hdc, MyBrush);
 
-	float left = this->position.x - GetSize().x;
-	float top = this->position.y - GetSize().y;
-	float right = this->position.x + GetSize().x;
-	float bottom = this->position.y + GetSize().y;
+	Vector2D sizeVec = GetSize();
+
+	float left = this->position.x - sizeVec.x;
+	float top = this->position.y - sizeVec.y;
+	float right = this->position.x + sizeVec.x;
+	float bottom = this->position.y + sizeVec.y;
 
 	Rectangle(hdc, left, top, right, bottom);
+
+	SelectObject(hdc, OldBrush);
+	DeleteObject(MyBrush);
 }
 
 bool Tank::Update()

@@ -5,7 +5,7 @@ void TextUI::Draw(HWND hWnd, HDC hdc)
 	SetTextColor(hdc, WHITE_COLOR);
 	SetBkColor(hdc, BLACK_COLOR);
 	SetTextAlign(hdc, TA_CENTER);
-	TextOut(hdc, position.x, position.y, this->GetText(), wcslen(this->GetText()));
+	TextOut(hdc, position.x, position.y, text->c_str(), this->length);
 }
 
 void SpecialTextUI::Draw(HWND hWnd, HDC hdc)
@@ -15,7 +15,7 @@ void SpecialTextUI::Draw(HWND hWnd, HDC hdc)
 		SetTextColor(hdc, WHITE_COLOR);
 		SetBkColor(hdc, BLACK_COLOR);
 		SetTextAlign(hdc, TA_CENTER);
-		TextOut(hdc, position.x, position.y, this->GetText(), wcslen(this->GetText()));
+		TextOut(hdc, position.x, position.y, text->c_str() , this->length);
 	}
 }
 
@@ -28,11 +28,13 @@ bool SpecialTextUI::Update()
 
 void SpecialTextUI::Twinkle()
 {
-	std::chrono::duration<double> sec = std::chrono::system_clock::now() - this->start;
+	currentTime = chrono::system_clock::now();
 
-	if (sec.count() >= timeRate)
+	std::chrono::duration<double> sec = currentTime - previousTime;
+
+	if (sec.count() > timeRate)
 	{
 		flag = !flag;
-		this->start = std::chrono::system_clock::now();
+		previousTime = currentTime;
 	}
 }

@@ -79,6 +79,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="BulletTrail.cpp" />
+    <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="Collsion.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -99,6 +101,8 @@
   <ItemGroup>
     <ClInclude Include="builder.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletTrail.h" />
+    <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Game.h" />
@@ -107,6 +111,7 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="ParticleObject.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Pixel.h" />
     <ClInclude Include="Scene.h" />

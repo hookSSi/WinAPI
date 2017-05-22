@@ -21,6 +21,16 @@ Map::Map() : _persistance(0), _octave(0)
 
 bool Map::Initialize()
 {
+	/* 처음으로 초기화! */
+	for (int x = 0; x < WIDTH; x++)
+	{
+		for (int y = 0; y < HEIGHT; y++)
+		{
+			_terrain[x][y]->position = Vector2D(0, 0);
+			_terrain[x][y]->SetSolid(false);
+		}
+	}
+
 	srand((unsigned)time(nullptr));
 
 	// 지속성: 진폭이 작아져 가는 정도

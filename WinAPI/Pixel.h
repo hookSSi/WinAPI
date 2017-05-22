@@ -25,12 +25,13 @@ class Dynamic_Pixel : public Object
 public:
 	Vector2D lastPosition;
 	Vector2D velocity;
+	float maxVelocity;
 	
 	float stickness; // stickness 이하의 속도면 픽셀이 고정
 	float bounceFriction; // 탄성력
 
-	Dynamic_Pixel() :Object(), stickness(300), bounceFriction(0.35f){ type = OBJECT_TYPE::DYNAMIC_PIXEL; };
-	Dynamic_Pixel(Vector2D& p_postion) :Object(), stickness(300), bounceFriction(0.35f){ type = OBJECT_TYPE::DYNAMIC_PIXEL; this->position = p_postion; this->lastPosition = lastPosition; }
+	Dynamic_Pixel() :Object(), stickness(500), bounceFriction(0.25f), maxVelocity(1000){ type = OBJECT_TYPE::DYNAMIC_PIXEL; };
+	Dynamic_Pixel(Vector2D& p_postion) :Object(), stickness(500), bounceFriction(0.25f), maxVelocity(1000){ type = OBJECT_TYPE::DYNAMIC_PIXEL; this->position = p_postion; this->lastPosition = lastPosition; }
 	~Dynamic_Pixel(){ };
 
 	virtual void Draw(HWND hWnd, HDC hdc);

@@ -58,15 +58,34 @@ Scene* CreateScene2(Scene_Builder& builder)
 {
 	builder.CreateNewProduct();
 
-	// 제목
-	TextUI* subject = new TextUI(L"탱크 게임");
-	subject->position = Vector2D(200, 60);
-	// 메뉴 텍스트 UI
-	SpecialTextUI* menu_ui = new SpecialTextUI(L"Press Enter to start");
-	menu_ui->position = Vector2D(200, 100);
+	// 스코어 제목 관련 변수
+	int subjectGap = 100; // 수평
+	int subjectGap2 = 15;// 수직
+	// 스코어 관련 변수
+	int scoreGap = 105;
+	int scoreGap2 = 40;
 
-	builder.AddGameObject(subject);
-	builder.AddGameObject(menu_ui);
+
+	// 플레이어 1 스코어 UI
+	TextUI* scoreSubject1 = new TextUI(L"플레이어1 점수");
+	scoreSubject1->position = Vector2D(subjectGap, subjectGap2);
+	TextUI* score1 = new TextUI(L"0");
+	score1->position = Vector2D(scoreGap, scoreGap2);
+
+
+	// 플레이어 2 스코어 UI
+	TextUI* scoreSubject2 = new TextUI(L"플레이어2 점수");
+	scoreSubject2->position = Vector2D((int)(WIDTH - subjectGap), subjectGap2);
+	TextUI* score2 = new TextUI(L"0");
+	score2->position = Vector2D((int)(WIDTH - scoreGap), scoreGap2);
+
+	builder.AddGameObject(scoreSubject1);
+	builder.AddGameObject(score1);
+	builder.AddGameObject(scoreSubject2);
+	builder.AddGameObject(score2);
+
+	Game::GetInstance()->player1_scoreUI = score1;
+	Game::GetInstance()->player2_scoreUI = score2;
 
 	return builder.GetProduct();
 }

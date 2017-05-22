@@ -46,9 +46,16 @@ bool Dynamic_Pixel::Update()
 bool Dynamic_Pixel::FixedUpdate(float time)
 {
 	this->lastPosition = position;
-	this->position += velocity * time;
 
-	velocity += Vector2D(0.0f, 9.8f);
+	if (velocity.Magnitude() <= maxVelocity) // 최대 속도 제한
+		this->position += velocity * time;
+	else
+	{
+		velocity = (velocity.Normal() * maxVelocity);
+		this->position += velocity;
+	}
+
+	velocity += Vector2D(0.0f, 98.0f);
 
 	return true;
 }

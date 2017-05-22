@@ -4,6 +4,8 @@
 #include "Physics.h"
 #include "Scene.h"
 #include "ObjectPool.h"
+#include "ParticleManager.h"
+#include "BulletTrail.h"
 
 Bullet::Bullet() :Object()
 {
@@ -15,6 +17,13 @@ bool Bullet::FixedUpdate(float time)
 	this->lastPosition = this->position;
 	this->position += this->velocity * time;
 
+	float gravityAmt = 9.8f * 300 / velocity.y;
+
+	velocity += Vector2D(0.0f, gravityAmt);
+
+	collision.Update(this->position);
+	MakeTrail();
+
 	return true;
 }
 
@@ -24,7 +33,7 @@ bool Bullet::Update()
 
 	if (IsCollision)
 	{
-		Explode(10);
+		Explode(15);
 	}
 	else
 	{
@@ -62,7 +71,7 @@ bool Bullet::Explode(int radius)
 						pixel->SetSize(Vector2D(3, 3));
 
 						float distanceRate = 1 - length / r;
-						float speed = 30 * distanceRate;
+						float speed = 300 * distanceRate;
 
 						float xDiff = x - position.x;
 						float yDiff = y - position.y;
@@ -105,11 +114,12 @@ void Bullet::Draw(HWND hWnd, HDC hdc)
 	MyBrush = (HBRUSH)CreateSolidBrush(WHITE_COLOR);
 	OldBrush = (HBRUSH)SelectObject(hdc, MyBrush);
 
+	Vector2D sizeVector = GetSize();
 
-	float left = this->position.x - GetSize().x;
-	float top = this->position.y - GetSize().y;
-	float right = this->position.x + GetSize().x;
-	float bottom = this->position.y + GetSize().y;
+	float left = this->position.x - sizeVector.x;
+	float top = this->position.y - sizeVector.y;
+	float right = this->position.x + sizeVector.x;
+	float bottom = this->position.y + sizeVector.y;
 
 	Rectangle(hdc, left, top, right, bottom);
 
@@ -117,4 +127,19 @@ void Bullet::Draw(HWND hWnd, HDC hdc)
 	DeleteObject(MyPen);
 	SelectObject(hdc, OldBrush);
 	DeleteObject(MyBrush);
+
+	this->collision.Draw(hWnd, hdc);
+}
+
+void Bullet::MakeTrail()
+{
+	if (this->isActive)
+	{
+		BulletTrailObject* particleObj = (BulletTrailObject*)ObjectPool::GetInstance()->GetGameObject(OBJECT_TYPE::PARTICLE);
+
+		particleObj->position = this->position;
+		particleObj->Init();
+
+		ParticleManager::GetInstance()->AddObject(particleObj);
+	}
 }

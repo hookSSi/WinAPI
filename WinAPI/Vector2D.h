@@ -29,6 +29,7 @@ public:
 	const bool operator!=(const Vector2D &right) const;
 
 	const float Magnitude() const;
+	const Vector2D Normal() const;
 
 	bool isValid() const;
 
@@ -148,4 +149,9 @@ inline const float Vector2D::Magnitude() const
 	{
 		return sqrt(this->x * this->x + this->y * this->y);
 	}	
+}
+
+inline 	const Vector2D Vector2D::Normal() const
+{
+	return (*this) / this->Magnitude();
 }

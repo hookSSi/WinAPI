@@ -2,6 +2,33 @@
 #include "Object.h"
 #include "Bullet.h"
 #include "Pixel.h"
+#include "BulletTrail.h"
+
+Object* ObjectPool::TypeCheck(OBJECT_TYPE type)
+{
+	Object *obj;
+
+	switch (type)
+	{
+	case OBJECT_TYPE::OBJECT:
+		obj = new Object();
+		break;
+	case OBJECT_TYPE::BULLET:
+		obj = new Bullet();
+		break;
+	case OBJECT_TYPE::DYNAMIC_PIXEL:
+		obj = new Dynamic_Pixel();
+		break;
+	case OBJECT_TYPE::PARTICLE:
+		obj = new BulletTrailObject();
+		break;
+	default:
+		obj = new Object();
+		break;
+	}
+
+	return obj;
+}
 
 void ObjectPool::Create(OBJECT_TYPE type , int size)
 {
@@ -9,23 +36,7 @@ void ObjectPool::Create(OBJECT_TYPE type , int size)
 
 	for (int i = 0; i < size; i++)
 	{
-		Object *obj;
-
-		switch (type)
-		{
-		case OBJECT_TYPE::OBJECT:
-			obj = new Object();
-			break;
-		case OBJECT_TYPE::BULLET:
-			obj = new Bullet();
-			break;
-		case OBJECT_TYPE::DYNAMIC_PIXEL:
-			obj = new Dynamic_Pixel();
-			break;
-		default:
-			obj = new Object();
-			break;
-		}
+		Object *obj = this->TypeCheck(type);
 
 		obj->isActive = false;
 		objectList.push((Object*)obj);
@@ -43,21 +54,7 @@ Object* ObjectPool::GetGameObject(OBJECT_TYPE type)
 
 	if (count < 5)
 	{
-		switch (type)
-		{
-		case OBJECT_TYPE::OBJECT:
-			obj = new Object();
-			break;
-		case OBJECT_TYPE::BULLET:
-			obj = new Bullet();
-			break;
-		case OBJECT_TYPE::DYNAMIC_PIXEL:
-			obj = new Dynamic_Pixel();
-			break;
-		default:
-			obj = new Object();
-			break;
-		}
+		obj = this->TypeCheck(type);
 		obj->isActive = true;
 	}
 	else
@@ -77,4 +74,17 @@ void ObjectPool::Release(Object* gameObject)
 
 	gameObject->isActive = false;
 	objectPools[type].push(obj);
+}
+
+void ObjectPool::FreeAllObject()
+{
+	for (auto column = objectPools.begin(); column != objectPools.end(); column++)
+	{
+		auto row = (*column).second.top();
+		while (row != nullptr)
+		{
+			(*column).second.pop();
+			row = (*column).second.top();
+		}
+	}
 }

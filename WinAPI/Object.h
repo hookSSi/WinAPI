@@ -16,9 +16,6 @@ public:
 	Object() :isPhysics(false){ type = OBJECT_TYPE::OBJECT; counter++; };
 	virtual ~Object(){ };
 
-	Object(Object &other);
-	virtual const Object operator=(Object &other);
-
 	const Vector2D& GetSize() const;
 	const Vector2D& GetPivot() const;
 	bool SetSize(Vector2D& size);

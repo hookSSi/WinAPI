@@ -43,5 +43,8 @@ enum class OBJECT_TYPE
 {
 	OBJECT = 1,
 	BULLET = 2,
-	DYNAMIC_PIXEL = 3
+	DYNAMIC_PIXEL = 3,
+	PARTICLE = 4
 };
+
+static chrono::system_clock::time_point currentTime = chrono::system_clock::now(); // 현재 시간
