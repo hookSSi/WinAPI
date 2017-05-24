@@ -23,9 +23,10 @@ public:
 
 	// 스코어
 	TextUI* player1_scoreUI;
-	int player1_score = { 100 };
 	TextUI* player2_scoreUI;
-	int player2_score = { 100 };
+
+	int player1_score;
+	int player2_score;
 
 	Game();
 	virtual ~Game();
@@ -63,10 +64,10 @@ private:
 		WS_SYSMENU);
 	// scene 관련 멤버
 	vector<Scene*> scene_list; // scene 리스트
-	bool is_scene_loaded = false; // scene이 로드 됬나요?
 	SCENE_NAME currentScene;
 	// 맵
 	vector<Map*> map_list; // 지형 리스트
 
-	bool isLoaded = { false };
+	bool is_scene_loaded; // scene이 로드 됬나요?
+	bool isLoaded;
 };

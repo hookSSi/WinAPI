@@ -14,7 +14,6 @@ HINSTANCE g_hInst;
 
 Game::Game()
 {
-	eventManager = new EventManager();
 }
 
 Game::~Game()
@@ -34,6 +33,14 @@ Game::~Game()
 
 bool Game::Initilize()
 {
+	is_scene_loaded = false ; // scene이 로드 됬나요?
+	isLoaded = false ;
+
+	currentScene = SCENE_NAME::MAIN;
+	eventManager = new EventManager();
+
+	Physics::GetInstance();
+
 	Scene_Builder builder;
 
 	scene_list.push_back(new Scene());
@@ -109,7 +116,7 @@ HWND Game::GenerateGameWindow(HINSTANCE hInstance, LPCWSTR lpszClass, WNDPROC Wn
 
 bool Game::Start()
 {
-	this->LoadScene();
+	this->LoadScene(); // 여기서 문제발생인듯
 	return true;
 }
 
@@ -193,6 +200,7 @@ bool Game::LoadScene()
 	}
 
 	is_scene_loaded = true;
+
 	return true;
 }
 

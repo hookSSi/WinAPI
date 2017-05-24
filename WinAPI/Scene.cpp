@@ -75,7 +75,8 @@ bool Scene::Draw(HWND hWnd, HDC hdc)
 {
 	for (auto iter = objectList.begin(); iter != objectList.end(); iter++)
 	{
-		(*iter)->Draw(hWnd, hdc);
+		if ((*iter)->isActive)
+			(*iter)->Draw(hWnd, hdc);
 	}
 
 	return true;
