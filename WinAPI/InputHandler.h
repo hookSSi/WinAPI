@@ -1,40 +1,44 @@
 #pragma once
-#include<Windows.h>
+#include "stdafx.h"
 
 class Command
 {
 public:
 	virtual ~Command(){};
-	virtual bool execute() = 0;
+	virtual void execute(Tank& tank) = 0;
 };
 
 class InputHandler
 {
+	friend class InputHandler2;
+
 public:
 	InputHandler(){}
-	~InputHandler(){ delete(buttonA); 
+	virtual ~InputHandler(){ delete(buttonA); 
 					 delete(buttonS); 
 					 delete(buttonD);
 					 delete(buttonW);
-					 delete(buttonSpace);
 					 delete(buttonShift);
 					 delete(buttonCtrl);
 	}
 
-	bool InputHandle(WPARAM wParam);
-	bool SetButtonA(Command* button){ buttonA = button; return true; }
-	bool SetButtonD(Command* button){ buttonD = button; return true; }
+	virtual Command* InputHandle(WPARAM wParam);
+	void SetButtonA(Command* button){ buttonA = button;}
+	void SetButtonS(Command* button){ buttonS = button; }
+	void SetButtonD(Command* button){ buttonD = button;}
+	void SetButtonW(Command* button){ buttonW = button; }
+	void SetButtonShift(Command* button) { buttonShift = button; }
+	void SetButtonCtrl(Command* button) { buttonCtrl = button; }
 private:
 	Command* buttonA; // 왼쪽 이동
 	Command* buttonS; // 아래로 포이동
 	Command* buttonD; // 오른쪽 이동
 	Command* buttonW; // 위로로 포이동
-	Command* buttonSpace; // 발사
-	Command* buttonShift; // 대쉬
+	Command* buttonShift; // 발사
 	Command* buttonCtrl; // 점프
 };
 
-inline bool InputHandler::InputHandle(WPARAM wParam)
+inline Command* InputHandler::InputHandle(WPARAM wParam)
 {
 	switch (wParam)
 	{
@@ -42,49 +46,98 @@ inline bool InputHandler::InputHandle(WPARAM wParam)
 	case 'a':
 		if (buttonA != nullptr)
 		{
-			buttonA->execute();
+			return buttonA;
 		}		
 		break;
 	case 'S':
 	case 's':
 		if (buttonS != nullptr)
 		{
-			buttonS->execute();
+			return buttonS;
 		}
 		break;
 	case 'D':
 	case 'd':
 		if (buttonD != nullptr)
 		{
-			buttonD->execute();
+			return buttonD;
 		}
 		break;
 	case 'W':
 	case 'w':
 		if (buttonW != nullptr)
 		{
-			buttonW->execute();
-		}
-		break;
-	case VK_SPACE:
-		if (buttonSpace != nullptr)
-		{
-			buttonSpace->execute();
+			return buttonW;
 		}
 		break;
 	case VK_SHIFT:
 		if (buttonShift != nullptr)
 		{
-			buttonShift->execute();
+			return buttonShift;
 		}
 		break;
 	case VK_CONTROL:
 		if (buttonCtrl != nullptr)
 		{
-			buttonCtrl->execute();
+			return buttonCtrl;
 		}
 		break;
 	}
 
-	return true;
+	return nullptr;
+}
+
+class InputHandler2 : public InputHandler
+{
+public:
+	InputHandler2(){}
+	virtual ~InputHandler2(){}
+	virtual Command* InputHandle(WPARAM wParam);
+};
+
+inline Command* InputHandler2::InputHandle(WPARAM wParam)
+{
+	switch (wParam)
+	{
+	case VK_LEFT:
+		if (buttonA != nullptr)
+		{
+			return buttonA;
+		}
+		break;
+	case VK_DOWN:
+		if (buttonS != nullptr)
+		{
+			return buttonS;
+		}
+		break;
+	case VK_RIGHT:
+		if (buttonD != nullptr)
+		{
+			return buttonD;
+		}
+		break;
+	case VK_UP:
+		if (buttonW != nullptr)
+		{
+			return buttonW;
+		}
+		break;
+	case 'n':
+	case 'N':
+		if (buttonShift != nullptr)
+		{
+			return buttonShift;
+		}
+		break;
+	case 'm':
+	case 'M':
+		if (buttonCtrl != nullptr)
+		{
+			return buttonCtrl;
+		}
+		break;
+	}
+
+	return nullptr;
 }

@@ -35,7 +35,7 @@ namespace PerlinNoise
 }
 
 // 충돌 처리
-bool Raycast(int startX, int startY, int lastX, int lastY);
+const Vector2D& Raycast(int startX, int startY, int lastX, int lastY);
 
 bool IsValidPos(int x, int y);
 bool IsValidPos(Vector2D& pos);

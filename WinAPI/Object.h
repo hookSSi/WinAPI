@@ -1,19 +1,15 @@
 #pragma once
 #include "stdafx.h"
 #include "Component.h"
+#include "Collision.h"
 
 class Object:public Component{
 public:
-	static unsigned int counter;
-
 	OBJECT_TYPE type;
 
 	Vector2D position; // 위치
-	Vector2D rotation; // 회전
-	Vector2D scale; // 크기
-	bool isPhysics; // 물리 영향 받는 지 여부
 
-	Object() :isPhysics(false){ type = OBJECT_TYPE::OBJECT; counter++; };
+	Object(){ type = OBJECT_TYPE::OBJECT;};
 	virtual ~Object(){ };
 
 	const Vector2D& GetSize() const;

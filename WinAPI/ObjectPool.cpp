@@ -6,7 +6,7 @@
 
 Object* ObjectPool::TypeCheck(OBJECT_TYPE type)
 {
-	Object *obj;
+	Object *obj = nullptr;
 
 	switch (type)
 	{
@@ -48,19 +48,19 @@ void ObjectPool::Create(OBJECT_TYPE type , int size)
 
 Object* ObjectPool::GetGameObject(OBJECT_TYPE type)
 {
-	Object *obj;
+	Object *obj = nullptr;
 
 	int count = objectPools[type].size();
 
-	if (count < 5)
+	if (count > 0)
 	{
-		obj = this->TypeCheck(type);
+		obj = objectPools[type].top();
+		objectPools[type].pop();
 		obj->isActive = true;
 	}
 	else
 	{
-		obj = objectPools[type].top();
-		objectPools[type].pop();
+		obj = this->TypeCheck(type);
 		obj->isActive = true;
 	}
 

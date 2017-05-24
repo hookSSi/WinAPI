@@ -4,6 +4,7 @@
 #include "TextUI.h"
 #include "Map.h"
 #include "Game.h"
+#include "Physics.h"
 
 void FillSurface(HWND hWnd, HDC hdc, BOOL mode)
 {
@@ -79,10 +80,27 @@ Scene* CreateScene2(Scene_Builder& builder)
 	TextUI* score2 = new TextUI(L"0");
 	score2->position = Vector2D((int)(WIDTH - scoreGap), scoreGap2);
 
+	// 플레이어 1 탱크
+	Tank* player1_tank = new Tank();
+	player1_tank->position = Vector2D(100, 100);
+	player1_tank->SetSize(Vector2D(12, 2));
+
+	// 플레이어 2 탱크
+	Tank* player2_tank = new Tank();
+	player2_tank->position = Vector2D((int)(WIDTH - 100), 100);
+	player2_tank->SetSize(Vector2D(12, 2));
+
+	Physics::GetInstance()->player1_tank = player1_tank;
+	Physics::GetInstance()->player2_tank = player2_tank;
+	Game::GetInstance()->player1_tank = player1_tank;
+	Game::GetInstance()->player2_tank = player2_tank;
+
 	builder.AddGameObject(scoreSubject1);
 	builder.AddGameObject(score1);
 	builder.AddGameObject(scoreSubject2);
 	builder.AddGameObject(score2);
+	builder.AddGameObject(player1_tank);
+	builder.AddGameObject(player2_tank);
 
 	Game::GetInstance()->player1_scoreUI = score1;
 	Game::GetInstance()->player2_scoreUI = score2;
@@ -153,12 +171,12 @@ float PerlinNoise::PerlinNoise_1D(float x, float persistance, int octave)
 	return total;
 }
 
-bool Raycast(int startX, int startY, int lastX, int lastY)
+const Vector2D& Raycast(int startX, int startY, int lastX, int lastY)
 {
 	Map *terrain = Game::GetInstance()->GetMap();
 
-	int delta_x = abs(lastX - startX);
-	int delta_y = abs(lastY - startY);
+	int delta_x = abs(startX - lastX);
+	int delta_y = abs(startY - lastY);
 
 	int x = startX;
 	int y = startY;
@@ -213,12 +231,12 @@ bool Raycast(int startX, int startY, int lastX, int lastY)
 	{
 		if (!IsValidPos(x, y))
 		{
-			return false;
+			return Vector2D(-1,-1);
 		}
 
 		if (terrain->IsPixelSolid(x, y))
 		{
-			return true;
+			return Vector2D(x,y);
 		}
 
 		prevX = x;
@@ -237,7 +255,7 @@ bool Raycast(int startX, int startY, int lastX, int lastY)
 		y += yinc2;	
 	}
 
-	return false;
+	return Vector2D(-1, -1);
 }
 
 bool IsValidPos(int x, int y)

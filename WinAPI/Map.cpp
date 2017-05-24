@@ -99,7 +99,7 @@ bool Map::Draw(HWND hWnd, HDC hdc)
 	SelectObject(hdc, OldBrush);
 	DeleteObject(MyBrush);
 
-	Draw_norm(hWnd, hdc, this->toggle);
+	//Draw_norm(hWnd, hdc, this->toggle);
 
 	return true;
 }

@@ -11,7 +11,7 @@ void BulletTrailObject::Draw(HWND hWnd, HDC hdc)
 {
 	if (isActive)
 	{
-		SetPixel(hdc, position.x, position.y, WHITE_COLOR);
+		SetPixel(hdc, position.x, position.y, GREEN_COLOR);
 	}	
 }
 

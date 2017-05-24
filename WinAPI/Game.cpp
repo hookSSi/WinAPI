@@ -1,5 +1,4 @@
 #include "Game.h"
-#include "stdafx.h"
 #include "TextUI.h"
 #include "Scene.h"
 #include "Map.h"
@@ -7,24 +6,40 @@
 #include "Physics.h"
 #include "ObjectPool.h"
 #include "ParticleManager.h"
+#include "InputHandler.h"
+#include "TankCommand.h"
+#include "EventManager.h"
 
 HINSTANCE g_hInst;
 
-void CreateDynamicPixel(int x, int y)
+Game::Game()
 {
-	
+	eventManager = new EventManager();
+}
+
+Game::~Game()
+{
+	for (auto iter = scene_list.begin(); iter != scene_list.end(); iter++)
+	{
+		if ((*iter) != nullptr)
+		{
+			(*iter)->DeleteAllGameObject();
+			delete (*iter);
+		}
+	}
+	delete player1_input;
+	delete player2_input;
+	delete eventManager;
 }
 
 bool Game::Initilize()
 {
-	scene_list.reserve(2);
-
 	Scene_Builder builder;
 
-	scene_list.push_back(CreateScene1(builder));
-	scene_list.push_back(CreateScene2(builder));
+	scene_list.push_back(new Scene());
+	scene_list.push_back(new Scene());
 
-	map_list.reserve(2);
+	scene_list.reserve(2);
 
 	Map *map1 = new Map();
 	Map *map2 = new Map();
@@ -39,11 +54,32 @@ bool Game::Initilize()
 		map_list.push_back(map2);
 	}
 
-	this->SetScene(0);
-	
-	this->isLoaded = true;
+	map_list.reserve(2);
+
+	this->SetScene(SCENE_NAME::MENU);
 
 	ObjectPool::GetInstance();
+
+	float speed = 40;
+	float degreeScale = 2;
+
+	player1_input = new InputHandler();
+	player1_input->SetButtonA(new MoveCommand(Vector2D(-speed, 0.0f)));
+	player1_input->SetButtonD(new MoveCommand(Vector2D(speed, 0.0f)));
+	player1_input->SetButtonW(new FireDegreeCommand(degreeScale));
+	player1_input->SetButtonS(new FireDegreeCommand(-degreeScale));
+	player1_input->SetButtonCtrl(new JumpCommand(300));
+	player1_input->SetButtonShift(new FireCommand(1));
+
+	player2_input = new InputHandler2();
+	player2_input->SetButtonA(new MoveCommand(Vector2D(-speed, 0.0f)));
+	player2_input->SetButtonD(new MoveCommand(Vector2D(speed, 0.0f)));
+	player2_input->SetButtonW(new FireDegreeCommand(degreeScale));
+	player2_input->SetButtonS(new FireDegreeCommand(-degreeScale));
+	player2_input->SetButtonCtrl(new JumpCommand(300));
+	player2_input->SetButtonShift(new FireCommand(2));
+
+	this->isLoaded = true;
 
 	return true;
 }
@@ -79,18 +115,24 @@ bool Game::Start()
 
 bool Game::Update()
 {
-	if (is_scene_loaded)
+	if (is_scene_loaded && this->isLoaded)
 	{
-		if (scene_list.size() > currentScene)
+		if (scene_list.size() > (int)currentScene)
 		{
-			scene_list[currentScene]->Update(); // Update
+			scene_list[(int)currentScene]->Update(); // Update
 			Physics::GetInstance()->Update(); // FixedUpdate
 			ParticleManager::GetInstance()->Update();
 			
-			if (currentScene == 1) // 본 게임의 시작
+			if (currentScene == SCENE_NAME::MAIN) // 본 게임의 시작
 			{
 				player1_scoreUI->SetText(player1_score);
-				player1_scoreUI->SetText(player2_score);
+				player2_scoreUI->SetText(player2_score);
+
+				if (eventManager->flag)
+				{
+					eventManager->flag = false;
+					Game::GetInstance()->LoadNewGame();
+				}	
 			}
 
 			return true;
@@ -100,13 +142,13 @@ bool Game::Update()
 
 bool Game::Draw(HWND hWnd, HDC hdc)
 {
-	if (is_scene_loaded)
+	if (is_scene_loaded && this->isLoaded)
 	{
-		if (scene_list.size() > currentScene)
+		if (scene_list.size() > (int)currentScene)
 		{
-			scene_list[currentScene]->Draw(hWnd, hdc);
+			scene_list[(int)currentScene]->Draw(hWnd, hdc);
 			ParticleManager::GetInstance()->Draw(hWnd,hdc);
-			map_list[currentScene]->Draw(hWnd,hdc);
+			map_list[(int)currentScene]->Draw(hWnd,hdc);
 			return true;
 		}
 	}
@@ -118,12 +160,13 @@ bool Game::ExitGame()
 	return true;
 }
 
-bool Game::SetScene(int number)
+bool Game::SetScene(SCENE_NAME scene_name)
 {
-	if (scene_list.size() > number)
+	if (scene_list.size() > (int)scene_name)
 	{
-		scene_list[currentScene]->DeleteAllGameObject();
-		this->currentScene = number;
+		scene_list[(int)currentScene]->DeleteAllGameObject();
+		delete scene_list[(int)currentScene];
+		this->currentScene = scene_name;
 		is_scene_loaded = false;
 		return true;
 	}
@@ -141,11 +184,11 @@ bool Game::LoadScene()
 
 	switch (this->currentScene)
 	{
-	case 0:
-		scene_list[currentScene] = CreateScene1(builder);
+	case SCENE_NAME::MENU:
+		scene_list[(int)currentScene] = CreateScene1(builder);
 		break;
-	case 1:
-		scene_list[currentScene] = CreateScene2(builder);
+	case SCENE_NAME::MAIN:
+		scene_list[(int)currentScene] = CreateScene2(builder);
 		break;
 	}
 
@@ -159,61 +202,59 @@ bool Game::InputHandle(WPARAM wParam)
 	{
 		switch (wParam)
 		{
-		case 'A':
-		case 'a':
-			break;
-		case 'D':
-		case 'd':
-			break;
-		case WM_LBUTTONDOWN:
-			break;
 		case VK_ESCAPE:
 			PostQuitMessage(0);
 			break;
 		case VK_RETURN:
-			this->SetScene(1);
-			LoadScene();
-			map_list[currentScene]->Initialize();
+			player1_score = 0;
+			player2_score = 0;
+			LoadNewGame();
 			break;
 		default:
-			return false;
+			if (currentScene == SCENE_NAME::MAIN)
+			{
+				Command *command = (player1_input->InputHandle(wParam));
+
+				if (command != nullptr)
+					command->execute(*player1_tank);
+
+				Command *command2 = (player2_input->InputHandle(wParam));
+
+				if (command2 != nullptr)
+					command2->execute(*player2_tank);
+			}
 			break;
 		}
 	}
 	
 	return true;
 }
-
-void Game::CreateBullet(LPARAM lParam)
+void Game::LoadNewGame()
 {
-	if (this->isLoaded)
+	this->SetScene(SCENE_NAME::MAIN);
+	LoadScene();
+	map_list[(int)currentScene]->Initialize();
+}
+
+void Game::AddGameObjet(Object* object)
+{ 
+	scene_list[(int)currentScene]->AddGameObject(object);
+	Physics::GetInstance()->AddObject(object);
+}
+
+void Game::CreateBullet(LPARAM lParam, int p_master)
+{
+	if (this->isLoaded && currentScene == SCENE_NAME::MENU)
 	{
 		Bullet *bullet = (Bullet*)ObjectPool::GetInstance()->GetGameObject(OBJECT_TYPE::BULLET);
 
 		bullet->SetPosition(Vector2D(LOWORD(lParam), HIWORD(lParam)));
 		bullet->SetSize(Vector2D(3, 3));
-		bullet->velocity = Vector2D(0, 300);
+		bullet->velocity = Vector2D(0, 10);
+		bullet->master = p_master;
+		bullet->Init();
 
-		bool success = scene_list[currentScene]->AddGameObject(bullet);
-
-		if (success)
-		{
-			Physics::GetInstance()->AddObject(bullet);
-		}
-
-	/*	Dynamic_Pixel *pixel = new Dynamic_Pixel();
-
-		pixel->SetPosition(Vector2D(LOWORD(lParam), HIWORD(lParam)));
-		pixel->SetSize(Vector2D(3, 3));
-		pixel->velocity = Vector2D(0, 300);
-
-		string str = "Bullet";
-
-		bool success = scene_list[currentScene]->AddGameObject(str, pixel);
-
-		if (success)
-		{
-			Physics::GetInstance()->AddObject(pixel);
-		}*/
+		scene_list[(int)currentScene]->AddGameObject(bullet);
+		Physics::GetInstance()->AddObject(bullet);
 	}
 }

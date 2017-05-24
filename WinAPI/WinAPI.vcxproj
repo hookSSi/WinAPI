@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="BulletTrail.cpp" />
+    <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="ParticleManager.cpp" />
     <ClCompile Include="Collsion.cpp" />
     <ClCompile Include="Common.cpp" />
@@ -95,6 +96,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Tank.cpp" />
+    <ClCompile Include="TankCommand.cpp" />
     <ClCompile Include="TextUI.cpp" />
     <ClCompile Include="Vector2D.cpp" />
   </ItemGroup>
@@ -102,6 +104,8 @@
     <ClInclude Include="builder.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletTrail.h" />
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Component.h" />

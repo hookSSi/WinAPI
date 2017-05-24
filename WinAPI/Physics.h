@@ -14,7 +14,11 @@ public:
 	Vector2D gravityAmt;
 	bool isGravity; // 중력?
 
-	bool Update();
+	bool Update(); // 물리 업데이트
+	void CollisionCheck(); // 충돌 체크
+
+	Tank* player1_tank = nullptr; // 플레이어 1 탱크
+	Tank* player2_tank = nullptr; // 플레이어 2 탱크
 
 	void AddObject(Object* object);
 	void DeleteObject(Object* object);

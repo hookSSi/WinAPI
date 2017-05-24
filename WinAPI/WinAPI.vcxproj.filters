@@ -105,6 +105,12 @@
     <ClInclude Include="BulletTrail.h">
       <Filter>소스 파일\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>소스 파일\Design Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>소스 파일\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -157,6 +163,12 @@
     </ClCompile>
     <ClCompile Include="BulletTrail.cpp">
       <Filter>소스 파일\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="TankCommand.cpp">
+      <Filter>소스 파일\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager.cpp">
+      <Filter>소스 파일\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

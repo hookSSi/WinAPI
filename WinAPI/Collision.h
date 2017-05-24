@@ -5,6 +5,7 @@
 class Collision :public Component
 {
 public:
+	Vector2D lastPosition;
 	Vector2D position;
 	float radius; // 반지름
 	bool isCollision; // 충돌됨?
@@ -13,7 +14,7 @@ public:
 
 	Collision() : debug(true),radius(10),isCollision(false){}
 	virtual ~Collision(){}
-	virtual bool Update(Vector2D& pos);
+	virtual bool Update(Vector2D& pos,Vector2D& lastPos);
 	virtual bool Draw(HWND hWnd, HDC hdc);
-	bool CollisionCheck(Collision& other);
+	bool CollisionCheck(Collision* other);
 };

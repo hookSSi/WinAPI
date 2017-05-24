@@ -66,7 +66,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		Game::GetInstance()->InputHandle(wParam);
 		return 0;
 	case WM_LBUTTONDOWN:
-		Game::GetInstance()->CreateBullet(lParam);
+		Game::GetInstance()->CreateBullet(lParam,1);
+		return 0;
+	case WM_RBUTTONDOWN:
+		Game::GetInstance()->CreateBullet(lParam, 2);
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
@@ -82,5 +85,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
+
 	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
 }

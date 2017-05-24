@@ -1,7 +1,5 @@
 #include "Object.h"
 
-unsigned int Object::counter = 0;
-
 const Vector2D& Object::GetSize() const  { return this->size; } // 크기 2D벡터를 리턴함
 const Vector2D& Object::GetPivot() const  { return this->pivot; } // 피봇 2D벡터를 리턴함
 

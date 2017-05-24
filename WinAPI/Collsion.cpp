@@ -1,13 +1,15 @@
 #include "Collision.h"
 
 // 충돌 처리 업데이트
-bool Collision::Update(Vector2D& pos)
+bool Collision::Update(Vector2D& pos, Vector2D& lastPos)
 {
 	if (isActive)
 	{
 		this->position = pos;
+		this->lastPosition = lastPos;
 		return true; // 컴포넌트가 Active 되어 있어 Update가 실행됨
 	}
+
 	return false; // 컴포넌트가 Active 되어 있지 않음
 }
 
@@ -36,18 +38,88 @@ bool Collision::Draw(HWND hWnd, HDC hdc)
 	return true;
 }
 
-bool Collision::CollisionCheck(Collision& other)
+bool Collision::CollisionCheck(Collision* other)
 {
-	// 두원 사이의 거리 > 둘 중 큰 반지름 = 충돌 없음
-	int maxRadius = this->radius >= other.radius ? this->radius : other.radius;
+	
+	int delta_x = abs(other->lastPosition.x - other->position.x);
+	int delta_y = abs(other->lastPosition.y - other->position.y);
 
-	if (VectorMath::GetDistance(this->position, other.position) > maxRadius)
+	int x = other->lastPosition.x;
+	int y = other->lastPosition.y;
+
+	int xinc1, xinc2, yinc1, yinc2;
+
+	if (other->lastPosition.x <= other->position.x)
 	{
-		this->isCollision = false;
+		xinc1 = 1;
+		xinc2 = 1;
 	}
 	else
 	{
-		this->isCollision = true;
+		xinc1 = -1;
+		xinc2 = -1;
+	}
+	if (other->lastPosition.y <= other->position.y)
+	{
+		yinc1 = 1;
+		yinc2 = 1;
+	}
+	else
+	{
+		yinc1 = -1;
+		yinc2 = -1;
+	}
+
+	int den, num, numadd, numpixels;
+	if (delta_x >= delta_y)
+	{
+		xinc1 = 0;
+		yinc2 = 0;
+		den = delta_x;
+		num = delta_x / 2;
+		numadd = delta_y;
+		numpixels = delta_x;
+	}
+	else
+	{
+		xinc2 = 0;
+		yinc1 = 0;
+		den = delta_y;
+		num = delta_y / 2;
+		numadd = delta_x;
+		numpixels = delta_y;
+	}
+
+	int prevX = other->lastPosition.x;
+	int prevY = other->lastPosition.y;
+
+	for (int curpixel = 0; curpixel <= numpixels; curpixel++)
+	{
+		// 두원 사이의 거리 > 원A 반지름 + 원B 반지름 = 충돌 없음
+		if (VectorMath::GetDistance(Vector2D(x, y), this->position) > this->radius + other->radius)
+		{
+			this->isCollision = false;
+		}
+		else
+		{
+			this->isCollision = true;
+			return this->isCollision;
+		}
+
+		prevX = x;
+		prevY = y;
+
+		num += numadd;
+
+		if (num >= den)
+		{
+			num -= den;
+			x += xinc1;
+			y += yinc1;
+		}
+
+		x += xinc2;
+		y += yinc2;
 	}
 
 	return this->isCollision;

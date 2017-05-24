@@ -2,6 +2,8 @@
 #include "Object.h"
 #include "Collision.h"
 #include "Bullet.h"
+#include "Tank.h"
+#include "Game.h"
 
 void Physics::AddObject(Object* object)
 { 
@@ -10,7 +12,7 @@ void Physics::AddObject(Object* object)
 
 bool Physics::Update()
 {
-	if (object_list.size() > 0)
+	if (object_list.size() > 0 || (player1_tank != nullptr && player2_tank != nullptr))
 	{
 		currentTime = chrono::system_clock::now();
 
@@ -29,19 +31,16 @@ bool Physics::Update()
 				if ((*iter)->isActive)
 				{
 					(*iter)->FixedUpdate(this->fixedDeltaTime);
-
-					if ((*iter)->type == OBJECT_TYPE::BULLET) // collision 체크를 할거임
-					{
-						for (auto other = iter; other != object_list.end(); other++)
-						{
-							Bullet* bullet = (Bullet*)(*iter);
-							Bullet* otherBullet = (Bullet*)(*other);
-							bullet->collision.CollisionCheck(otherBullet->collision);
-						}
-					}
 				}	
 			}
+			if (player1_tank != nullptr && player2_tank != nullptr)
+			{
+				player1_tank->FixedUpdate(this->fixedDeltaTime);
+				player2_tank->FixedUpdate(this->fixedDeltaTime);
+			}
 		}
+		
+		this->CollisionCheck();
 
 		this->previousTime = currentTime;
 	}
@@ -49,20 +48,66 @@ bool Physics::Update()
 	return true;
 }
 
+
+// 탱크와 총알의 충돌을 어떻게 깔끔하게 처리할까?
+void Physics::CollisionCheck()
+{
+	if (player1_tank != nullptr && player2_tank != nullptr)
+	{
+		// 플레이어 1
+		if (player1_tank->collision.isActive)
+		{
+			for (auto iter = object_list.begin(); iter != object_list.end(); iter++)
+			{
+				if ((*iter)->type == OBJECT_TYPE::BULLET)
+				{
+					if ((*iter)->isActive)	// collision 체크를 할거임
+					{
+						Bullet* bullet = (Bullet*)(*iter);
+
+						if (bullet->master == 2)
+						{
+							if (player1_tank->collision.CollisionCheck(&bullet->collision))
+							{
+								bullet->DeleteSelf();
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// 플레이어 2
+		if (player2_tank->collision.isActive)
+		{
+			for (auto iter = object_list.begin(); iter != object_list.end(); iter++)
+			{
+				if ((*iter)->type == OBJECT_TYPE::BULLET)
+				{
+					if ((*iter)->isActive)	// collision 체크를 할거임
+					{
+						Bullet* bullet = (Bullet*)(*iter);
+
+						if (bullet->master == 1)
+						{
+							if (player2_tank->collision.CollisionCheck(&bullet->collision))
+							{
+								bullet->DeleteSelf();
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+}
+
 void Physics::DeleteObject(Object* object)
 {
-	for (auto iter = object_list.begin(); iter != object_list.end();)
-	{
-		if ((*iter) == object)
-		{
-			iter = object_list.erase(iter);
-			return;
-		}
-		else
-		{
-			iter++;
-		}
-	}
+	object_list.remove(object);
 }
 
 void Physics::DeleteAllObject()

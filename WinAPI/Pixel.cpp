@@ -14,12 +14,12 @@ bool Pixel::Update()
 
 void Dynamic_Pixel::Draw(HWND hWnd, HDC hdc)
 {
-	SetPixel(hdc, position.x, position.y, GREEN_COLOR);
+	SetPixel(hdc, position.x, position.y, WHITE_COLOR);
 }
 
 bool Dynamic_Pixel::Update()
 {
-	bool IsCollision = Raycast(lastPosition.x, lastPosition.y, position.x, position.y);
+	bool IsCollision = Raycast(lastPosition.x, lastPosition.y, position.x, position.y).isValid();
 
 	if (IsCollision)
 	{

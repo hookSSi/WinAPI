@@ -16,6 +16,7 @@ public:
 	const Vector2D operator+(const Vector2D &right) const;
 	const Vector2D operator+=(const Vector2D &right);
 	const Vector2D operator-(const Vector2D &right) const;
+	const Vector2D operator-=(const Vector2D &right);
 
 	const Vector2D operator*(const Vector2D &right) const;
 	const Vector2D operator*(const int right) const;
@@ -72,6 +73,16 @@ inline const Vector2D Vector2D::operator-(const Vector2D &right) const
 	Vector2D temp;
 	temp.x = this->x - right.x;
 	temp.y = this->y - right.y;
+	return temp;
+}
+
+inline const Vector2D Vector2D::operator-=(const Vector2D &right)
+{
+	Vector2D temp;
+	this->x -= right.x;
+	this->y -= right.y;
+	temp.x = this->x;
+	temp.y = this->y;
 	return temp;
 }
 

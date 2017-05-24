@@ -15,13 +15,14 @@ Bullet::Bullet() :Object()
 bool Bullet::FixedUpdate(float time)
 {
 	this->lastPosition = this->position;
-	this->position += this->velocity * time;
+	this->position += velocity;
 
-	float gravityAmt = 9.8f * 300 / velocity.y;
+	collision.Update(this->position, this->lastPosition);
+
+	float gravityAmt = 9.8f;
 
 	velocity += Vector2D(0.0f, gravityAmt);
 
-	collision.Update(this->position);
 	MakeTrail();
 
 	return true;
@@ -29,11 +30,12 @@ bool Bullet::FixedUpdate(float time)
 
 bool Bullet::Update()
 { 
-	bool IsCollision = Raycast(lastPosition.x, lastPosition.y, position.x, position.y);
+	Vector2D collisionVec = Raycast(lastPosition.x, lastPosition.y, position.x, position.y);
+	bool IsCollision = collisionVec.isValid();
 
 	if (IsCollision)
 	{
-		Explode(15);
+		Explode(15, collisionVec);
 	}
 	else
 	{
@@ -44,17 +46,17 @@ bool Bullet::Update()
 	return true;
 }
 
-bool Bullet::Explode(int radius)
+bool Bullet::Explode(int radius, Vector2D collisionVec)
 {
 	Map *map = Game::GetInstance()->GetMap();
 	
-	for (int x = position.x - radius; x <= position.x + radius; x++)
+	for (int x = collisionVec.x - radius; x <= collisionVec.x + radius; x++)
 	{
-		for (int y = position.y - radius; y <= position.y + radius; y++)
+		for (int y = collisionVec.y - radius; y <= collisionVec.y + radius; y++)
 		{
 			if (IsValidPos(x, y)) // À¯È¿ÇÑ ÁÂÇ¥?
 			{
-				float length = ((x - position.x) * (x - position.x) + (y - position.y) * (y - position.y));
+				float length = ((x - collisionVec.x) * (x - collisionVec.x) + (y - collisionVec.y) * (y - collisionVec.y));
 				float r = radius * radius;
 
 				if (length <= r)
@@ -73,16 +75,14 @@ bool Bullet::Explode(int radius)
 						float distanceRate = 1 - length / r;
 						float speed = 300 * distanceRate;
 
-						float xDiff = x - position.x;
-						float yDiff = y - position.y;
+						float xDiff = x - collisionVec.x;
+						float yDiff = y - collisionVec.y;
 
 						srand((unsigned)time(nullptr));
 						float velX = speed * (xDiff + (rand() % 20 - 10));
 						float velY = speed * (yDiff + (rand() % 20 - 10));
 
 						pixel->velocity = Vector2D(velX, velY);
-
-						string str = "pixel";
 
 						Scene *scene = Game::GetInstance()->GetScene();
 
@@ -128,7 +128,7 @@ void Bullet::Draw(HWND hWnd, HDC hdc)
 	SelectObject(hdc, OldBrush);
 	DeleteObject(MyBrush);
 
-	this->collision.Draw(hWnd, hdc);
+	//this->collision.Draw(hWnd, hdc);
 }
 
 void Bullet::MakeTrail()
